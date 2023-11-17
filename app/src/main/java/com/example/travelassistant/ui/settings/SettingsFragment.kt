@@ -6,14 +6,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.travelassistant.R
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : Fragment(), OnMapReadyCallback {
+    private lateinit var view: View
+    private lateinit var mapFragment: SupportMapFragment
+    private lateinit var googleMap: GoogleMap
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        view = inflater.inflate(R.layout.fragment_settings, container, false)
+
+        setupMap()
+
+        return view
+    }
+
+    private fun setupMap() {
+        mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
+
+    override fun onMapReady(p0: GoogleMap) {
+        googleMap = p0
     }
 }
