@@ -2,20 +2,21 @@ package com.example.travelassistant
 
 import android.os.Bundle
 import android.view.Menu
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import com.aallam.openai.api.chat.ChatCompletionChunk
 import com.example.travelassistant.databinding.ActivityMainBinding
 import com.example.travelassistant.openai.TravelAssistant
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        traverAssistantExample()
+        traverAssistantExamples()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -66,22 +67,30 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun traverAssistantExample() {
+    private fun traverAssistantExamples() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                TravelAssistant.chatCompletions.collect { chatCompletionChunk ->
-                    println("chatCompletionChunk.choices.size: ${chatCompletionChunk.choices.size}")
-                    println("chatCompletionChunk.created: ${chatCompletionChunk.created}")
-                    chatCompletionChunk.choices.forEach {
-                        println("chatChunk.delta.content: ${it.delta.content}")
-                        println("chatChunk.role: ${it.delta.role}")
-                    }
-                }
-            }
+            TravelAssistant.example()
         }
+
+        var text = ""
+        fun processChatCompletionChunk(chatCompletionChunk: ChatCompletionChunk) {
+            chatCompletionChunk.choices.forEach {
+                text += it.delta.content
+            }
+            println("text: $text")
+        }
+
         val userLocation = "Burnaby, BC V5A 0A9"
         val userMessage = "Can you find me vegan food options?"
         val prompt = "My current location is $userLocation. $userMessage"
-        TravelAssistant.ask(prompt)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                println("\n\nTravelAssistant.chatCompletions.collect:")
+                TravelAssistant.ask(prompt).collect {
+                    processChatCompletionChunk(it)
+                }
+            }
+        }
+
     }
 }

@@ -5,11 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
 
-private const val INSTRUCTIONS =
-    "You are a travel assistant. You will help users with any questions they may have about their nearby location. Give them suggestions, help with their TODO list and events when asked."
-
 object TravelAssistantChat {
-    private const val assistantInstruction = INSTRUCTIONS
+    private const val assistantInstruction = TravelAssistantConstants.INSTRUCTIONS
     private val chatMessageInitial = ChatMessage(
         role = ChatRole.Assistant, content = assistantInstruction
     )
