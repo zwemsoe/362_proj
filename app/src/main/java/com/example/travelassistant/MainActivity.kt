@@ -11,7 +11,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.travelassistant.databinding.ActivityMainBinding
+import com.example.travelassistant.openai.TravelAssistant
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,6 +51,8 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        traverAssistantExample()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -57,5 +64,24 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun traverAssistantExample() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                TravelAssistant.chatCompletions.collect { chatCompletionChunk ->
+                    println("chatCompletionChunk.choices.size: ${chatCompletionChunk.choices.size}")
+                    println("chatCompletionChunk.created: ${chatCompletionChunk.created}")
+                    chatCompletionChunk.choices.forEach {
+                        println("chatChunk.delta.content: ${it.delta.content}")
+                        println("chatChunk.role: ${it.delta.role}")
+                    }
+                }
+            }
+        }
+        val userLocation = "Burnaby, BC V5A 0A9"
+        val userMessage = "Can you find me vegan food options?"
+        val prompt = "My current location is $userLocation. $userMessage"
+        TravelAssistant.ask(prompt)
     }
 }

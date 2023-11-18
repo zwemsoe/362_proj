@@ -9,6 +9,7 @@ import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
+import com.aallam.openai.client.RetryStrategy
 import com.example.travelassistant.BuildConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,8 @@ object TravelAssistant {
     private val modelId = ModelId(modelRawId)
     private val config = OpenAIConfig(
         token = BuildConfig.OPENAI_KEY,
-        timeout = Timeout(socket = 60.seconds),
+        timeout = Timeout(socket = 120.seconds),
+        retry = RetryStrategy(maxRetries = 1)
     )
     private val openAI = OpenAI(config)
     private val chatMessages = TravelAssistantChat.chatMessages.asFlow()
@@ -34,10 +36,10 @@ object TravelAssistant {
         openAI.chatCompletions(chatCompletionRequest)
     }
 
-    private fun ask(prompt: String) {
+    fun ask(prompt: String) {
         val messagePayload = ChatMessage(
-            role = ChatRole.User,
-            content = prompt
+            role = ChatRole.User, content = prompt
         )
+        TravelAssistantChat.addChatMessage(messagePayload)
     }
 }
