@@ -13,6 +13,7 @@ object TravelAssistantChat {
     private val chatMessageInitialList = mutableListOf(chatMessageInitial)
     private val _chatMessages = MutableLiveData(chatMessageInitialList.toList())
     val chatMessages: LiveData<List<ChatMessage>> get() = _chatMessages
+
     fun addChatMessage(chatMessage: ChatMessage) {
         chatMessageInitialList.add(chatMessage)
         _chatMessages.value = chatMessageInitialList
