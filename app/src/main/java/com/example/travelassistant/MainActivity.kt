@@ -52,8 +52,6 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        traverAssistantExamples()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -65,32 +63,5 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
-
-    private fun traverAssistantExamples() {
-        lifecycleScope.launch {
-            TravelAssistant.example()
-        }
-
-        var text = ""
-        fun processChatCompletionChunk(chatCompletionChunk: ChatCompletionChunk) {
-            chatCompletionChunk.choices.forEach {
-                text += it.delta.content
-            }
-            println("text: $text")
-        }
-
-        val userLocation = "Burnaby, BC V5A 0A9"
-        val userMessage = "Can you find me vegan food options?"
-        val prompt = "My current location is $userLocation. $userMessage"
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                println("\n\nTravelAssistant.chatCompletions.collect:")
-                TravelAssistant.ask(prompt).collect {
-                    processChatCompletionChunk(it)
-                }
-            }
-        }
-
     }
 }
