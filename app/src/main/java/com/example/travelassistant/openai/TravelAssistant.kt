@@ -15,6 +15,7 @@ import com.aallam.openai.client.RetryStrategy
 import com.example.travelassistant.BuildConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlin.time.Duration.Companion.seconds
 
@@ -36,44 +37,27 @@ object TravelAssistant {
             val chatCompletionRequest = ChatCompletionRequest(
                 model = modelId, messages = chatMessages
             )
-            openAI.chatCompletions(chatCompletionRequest)
+            getChatCompletions(chatCompletionRequest)
         }
+
+    private fun printError(e: OpenAIAPIException) {
+        println("Cannot complete ChatCompletionRequest:")
+        println(e.printStackTrace())
+    }
+
+    private fun getChatCompletions(chatCompletionRequest: ChatCompletionRequest):
+            Flow<ChatCompletionChunk> {
+        return try {
+            openAI.chatCompletions(chatCompletionRequest)
+        } catch (e: OpenAIAPIException) {
+            printError(e)
+            emptyFlow()
+        }
+    }
 
     fun ask(prompt: String): Flow<ChatCompletionChunk> {
         val messagePayload = ChatMessage(role = ChatRole.User, content = prompt)
         TravelAssistantChat.addChatMessage(messagePayload)
         return chatCompletions
-    }
-
-    suspend fun askOnce(prompt: String, personality: String?): ChatCompletion? {
-        val personalityFinal = personality ?: TravelAssistantConstants.INSTRUCTIONS
-        val instruction = ChatMessage(role = ChatRole.System, content = personalityFinal)
-        val payload = ChatMessage(role = ChatRole.User, content = prompt)
-        val messages = listOf(
-            instruction, payload
-        )
-        return try {
-            val req = ChatCompletionRequest(model = modelId, messages = messages)
-            openAI.chatCompletion(req)
-        } catch (e: OpenAIAPIException) {
-            println("Cannot complete ChatCompletionRequest: ${e.printStackTrace()}")
-            null
-        }
-    }
-
-    suspend fun example() {
-        val res = askOnce(
-            "Hello! What is 1+1",
-            "You are a helpful assistant!"
-        )
-        if (res == null) {
-            println("Example response for TravelAssistant returned null")
-            return
-        }
-        println("Example response for TravelAssistant:")
-        res.choices.forEach { chatChoice ->
-            println("role: ${chatChoice.message.role}")
-            println("content: ${chatChoice.message.content}")
-        }
     }
 }

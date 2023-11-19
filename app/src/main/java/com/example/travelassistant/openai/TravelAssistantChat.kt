@@ -10,12 +10,19 @@ object TravelAssistantChat {
     private val chatMessageInitial = ChatMessage(
         role = ChatRole.Assistant, content = assistantInstruction
     )
-    private val _chatMessages = MutableLiveData(listOf(chatMessageInitial))
+    private val chatMessageInitialList = mutableListOf(chatMessageInitial)
+    private val _chatMessages = MutableLiveData(chatMessageInitialList.toList())
     val chatMessages: LiveData<List<ChatMessage>> get() = _chatMessages
+
     fun addChatMessage(chatMessage: ChatMessage) {
-        val currList = _chatMessages.value ?: return
-        val updatedList = currList.toMutableList()
-        updatedList.add(chatMessage)
-        _chatMessages.value = updatedList
+        chatMessageInitialList.add(chatMessage)
+        _chatMessages.value = chatMessageInitialList
+    }
+
+    fun updateUserLocationKnowledge(location: String) {
+        val update = "User is now located at $location."
+        val infoUpdate = ChatMessage(role = ChatRole.Assistant, content = update)
+
+        addChatMessage(infoUpdate)
     }
 }

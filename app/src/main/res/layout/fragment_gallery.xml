@@ -1,22 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="30dp"
+    android:paddingVertical="20dp"
     tools:context=".ui.gallery.GalleryFragment">
 
-    <TextView
-        android:id="@+id/text_gallery"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:text="Suggestions"
+            android:textFontWeight="700"
+            tools:targetApi="p" />
+
+        <LinearLayout
+            android:id="@+id/todo_suggestions_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="150dp"
+            android:orientation="vertical" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="15dp"
+                android:text="My To Do List"
+                android:textFontWeight="700"
+                tools:targetApi="p" />
+
+            <LinearLayout
+                android:id="@+id/todo_created_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150dp"
+                android:orientation="vertical" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</ScrollView>
