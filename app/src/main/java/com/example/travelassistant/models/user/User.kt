@@ -10,8 +10,9 @@ data class TodoItem(
 data class User(
     val id: String,
     val displayName: String,
-    val createdAt: Long = System.currentTimeMillis(),
     val currentLocation: GeoPoint,
+    val createdAt: Long = System.currentTimeMillis(),
+    val keepLocationPrivate: Boolean = false,
     val points: Int = 0,
     val todoList: List<TodoItem> = listOf()
 )

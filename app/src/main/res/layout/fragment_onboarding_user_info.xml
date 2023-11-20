@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Eachother!"
+        android:text="Each other!"
         android:textSize="42sp"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -47,21 +47,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
-            android:text="You are"
+            android:text="What's your name?"
             android:textSize="28sp" />
 
-        <TextView
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/display_name_input"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:text="John"
-            android:textSize="18sp" />
+            android:hint="John Doe" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Doe"
-            android:textSize="18sp" />
+
     </LinearLayout>
 
     <Button
