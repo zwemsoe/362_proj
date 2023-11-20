@@ -1,16 +1,28 @@
 package com.example.travelassistant.ui.onboarding
 
 import android.Manifest
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.os.postDelayed
 import androidx.navigation.fragment.findNavController
 import com.example.travelassistant.R
 import com.example.travelassistant.utils.PermissionUtil
+import com.example.travelassistant.utils.slideUpAnimation
+import kotlinx.coroutines.delay
+import java.util.Timer
+import kotlin.concurrent.schedule
+
+private const val NAVIGATION_DELAY = 3000L
 
 class RequestPermissionsFragment : Fragment() {
     private lateinit var view: View
@@ -30,6 +42,7 @@ class RequestPermissionsFragment : Fragment() {
         // Request permissions again
         requestPermissions()
     }
+    private lateinit var requestPermissionsButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -37,14 +50,40 @@ class RequestPermissionsFragment : Fragment() {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_request_permissions, container, false)
 
-        view.findViewById<Button>(R.id.button_request_permissions).setOnClickListener {
-            handlePermissionRequests()
-        }
+        requestPermissionsButton = view.findViewById(R.id.button_request_permissions)
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (hasPermissions()) {
+            onPermissionsGranted()
+        } else {
+            requestPermissionsButton.setOnClickListener {
+                handlePermissionRequests()
+            }
+        }
+    }
+
+    private fun navigateToNextOnboardingScreen() {
+        // TODO: Navigate away with animation
+        findNavController().navigate(R.id.action_requestPermissionsFragment_to_onboardingUserInfoFragment)
+    }
+
     private fun onPermissionsGranted() {
-        findNavController().navigate(R.id.action_requestPermissionsFragment_to_nav_home)
+        // clear the listener
+        requestPermissionsButton.setOnClickListener(null)
+        requestPermissionsButton.text = "Thanks For Permissions!"
+        val successGreen = Color.parseColor("#4BB543")
+        requestPermissionsButton.setBackgroundColor(successGreen)
+
+        //TODO: Add green checkboxes next to each permission text
+
+        // Wait some time to show user thank you message
+        Handler(Looper.getMainLooper()).postDelayed(NAVIGATION_DELAY) {
+            navigateToNextOnboardingScreen()
+        }
     }
 
     private fun hasPermissions(): Boolean {
@@ -68,4 +107,9 @@ class RequestPermissionsFragment : Fragment() {
             requestPermissions()
         }
     }
+
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        (activity as? AppCompatActivity)?.supportActionBar?.show()
+//    }
 }

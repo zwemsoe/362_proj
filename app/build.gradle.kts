@@ -46,6 +46,7 @@ dependencies {
     implementation("com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1")
     implementation("com.aallam.openai:openai-client:3.5.1")
     implementation("io.ktor:ktor-client-android:2.3.6")
+    implementation("androidx.core:core-splashscreen:1.0.0")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
