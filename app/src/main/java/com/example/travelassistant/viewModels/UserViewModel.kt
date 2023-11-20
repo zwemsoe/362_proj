@@ -1,9 +1,12 @@
-package com.example.travelassistant.models.user
+package com.example.travelassistant.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.travelassistant.models.user.TodoItem
+import com.example.travelassistant.models.user.User
+import com.example.travelassistant.models.user.UserRepository
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.launch
 
