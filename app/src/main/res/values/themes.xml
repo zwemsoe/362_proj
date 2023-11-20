@@ -23,4 +23,13 @@
     <style name="Theme.TravelAssistant.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.TravelAssistant.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.TravelAssistant.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+    </style>
+
+    <style name="AppTheme.CustomSplashScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 </resources>
