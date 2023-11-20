@@ -15,11 +15,9 @@ class GalleryViewModel : ViewModel() {
     val suggestedTodoList: LiveData<List<String>> = _suggestedTodoList
 
     fun generateSuggestions() {
-        val location = "4123 W 10th Ave, Vancouver, BC V6R 2H2"
-        TravelAssistantChat.updateUserLocationKnowledge(location)
         var responseText = ""
         viewModelScope.launch {
-            TravelAssistant.ask(INSTRUCTIONS_TODO_ITEM).collect {
+            TravelAssistant.askTodoSuggestions().collect {
                 it.choices.forEach { chatChoice ->
                     if (chatChoice.delta.content == null) {
                         extractSuggestions(responseText)

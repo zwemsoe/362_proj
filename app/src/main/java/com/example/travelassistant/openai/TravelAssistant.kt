@@ -29,16 +29,17 @@ object TravelAssistant {
         retry = RetryStrategy(maxRetries = 1)
     )
     private val openAI = OpenAI(config)
-    private val chatMessages = TravelAssistantChat.chatMessages.asFlow()
+//    private val chatMessages = TravelAssistantChat.chatMessages.asFlow()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val chatCompletions: Flow<ChatCompletionChunk> =
-        chatMessages.flatMapLatest { chatMessages ->
-            val chatCompletionRequest = ChatCompletionRequest(
-                model = modelId, messages = chatMessages
-            )
-            getChatCompletions(chatCompletionRequest)
-        }
+    private val todoSuggestionsRequest = ChatCompletionRequest(
+        model = modelId, messages = TravelAssistantChat.todoSuggestionsInitial
+    )
+    private val questionSuggestionsRequest = ChatCompletionRequest(
+        model = modelId, messages = TravelAssistantChat.questionSuggestionsInitial
+    )
+
+    private val todoSuggestionChunks = getChatCompletions(todoSuggestionsRequest)
+    private val questionSuggestionChunks = getChatCompletions(questionSuggestionsRequest)
 
     private fun printError(e: OpenAIAPIException) {
         println("Cannot complete ChatCompletionRequest:")
@@ -55,9 +56,11 @@ object TravelAssistant {
         }
     }
 
-    fun ask(prompt: String): Flow<ChatCompletionChunk> {
-        val messagePayload = ChatMessage(role = ChatRole.User, content = prompt)
-        TravelAssistantChat.addChatMessage(messagePayload)
-        return chatCompletions
+    fun askTodoSuggestions(): Flow<ChatCompletionChunk> {
+        return todoSuggestionChunks
+    }
+
+    fun askQuestionSuggestions(): Flow<ChatCompletionChunk> {
+        return questionSuggestionChunks
     }
 }
