@@ -27,7 +27,7 @@
         android:id="@+id/nav_settings"
         android:name="com.example.travelassistant.ui.settings.SettingsFragment"
         android:label="Settings"
-        tools:layout="@layout/fragment_settings" >
+        tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_nav_settings_to_nav_home"
             app:destination="@id/nav_home" />
@@ -42,7 +42,7 @@
         android:id="@+id/requestPermissionsFragment"
         android:name="com.example.travelassistant.ui.onboarding.RequestPermissionsFragment"
         android:label="fragment_request_permissions"
-        tools:layout="@layout/fragment_request_permissions" >
+        tools:layout="@layout/fragment_request_permissions">
         <action
             android:id="@+id/action_requestPermissionsFragment_to_onboardingUserInfoFragment"
             app:destination="@id/onboardingUserInfoFragment" />
@@ -51,7 +51,7 @@
         android:id="@+id/onboardingUserInfoFragment"
         android:name="com.example.travelassistant.ui.onboarding.OnboardingUserInfoFragment"
         android:label="fragment_onboarding_user_info"
-        tools:layout="@layout/fragment_onboarding_user_info" >
+        tools:layout="@layout/fragment_onboarding_user_info">
         <action
             android:id="@+id/action_onboardingUserInfoFragment_to_nav_settings"
             app:destination="@id/nav_settings" />

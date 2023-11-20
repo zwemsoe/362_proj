@@ -44,8 +44,7 @@ class GalleryFragment : Fragment() {
                 loadingOrFail.text = "Sorry, cannot give any suggestions at the moment"
                 return@observe
             }
-            container.removeView(loadingOrFail)
-
+            container.removeAllViews()
             suggestions.forEach { suggestion ->
                 val todoView = inflater.inflate(R.layout.todo_item, container, false)
                 todoView.findViewById<TextView>(R.id.textview_todo).text = suggestion
