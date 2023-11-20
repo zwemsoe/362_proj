@@ -1,15 +1,13 @@
-package com.example.travelassistant.ui.gallery
+package com.example.travelassistant.ui.todo
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelassistant.openai.TravelAssistant
-import com.example.travelassistant.openai.TravelAssistantChat
-import com.example.travelassistant.openai.TravelAssistantConstants.INSTRUCTIONS_TODO_ITEM
 import kotlinx.coroutines.launch
 
-class GalleryViewModel : ViewModel() {
+class TodoViewModel : ViewModel() {
     private val maxSuggestionCount = 3
     private val _suggestedTodoList = MutableLiveData<List<String>>()
     val suggestedTodoList: LiveData<List<String>> = _suggestedTodoList

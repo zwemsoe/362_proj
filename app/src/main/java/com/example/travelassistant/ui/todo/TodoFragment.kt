@@ -1,4 +1,4 @@
-package com.example.travelassistant.ui.gallery
+package com.example.travelassistant.ui.todo
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,17 +9,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelassistant.R
-import com.example.travelassistant.databinding.FragmentGalleryBinding
 import com.google.android.material.internal.ViewUtils.hideKeyboard
 
-class GalleryFragment : Fragment() {
+class TodoFragment : Fragment() {
     private lateinit var view: View
     private lateinit var inflater: LayoutInflater
-    private lateinit var viewModel: GalleryViewModel
+    private lateinit var viewModel: TodoViewModel
 
     private lateinit var todoListView : RecyclerView
     //temporary array store
@@ -30,8 +28,8 @@ class GalleryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         this.inflater = inflater
-        view = inflater.inflate(R.layout.fragment_gallery, container, false)
-        viewModel = ViewModelProvider(this)[GalleryViewModel::class.java]
+        view = inflater.inflate(R.layout.fragment_todo, container, false)
+        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
 
 
         return view
@@ -94,6 +92,6 @@ class GalleryFragment : Fragment() {
         tempItemsFinished.add(false)
         tempItemsFinished.add(false)
 
-        todoListView.adapter = GalleryRecyclerAdapter(tempItems,tempItemsFinished)
+        todoListView.adapter = TodoRecyclerAdapter(tempItems,tempItemsFinished)
     }
 }

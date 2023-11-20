@@ -12,16 +12,16 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.travelassistant.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_todo"
+        android:name="com.example.travelassistant.ui.todo.TodoFragment"
+        android:label="Todo"
+        tools:layout="@layout/fragment_todo" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.travelassistant.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_myevents"
+        android:name="com.example.travelassistant.ui.myevents.MyEventsFragment"
+        android:label="My Events"
+        tools:layout="@layout/fragment_myevents" />
 
     <fragment
         android:id="@+id/nav_settings"

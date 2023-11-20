@@ -11,7 +11,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.travelassistant.DataStoreManager
+import com.example.travelassistant.manager.DataStoreManager
 import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.viewModels.OnboardingViewModel

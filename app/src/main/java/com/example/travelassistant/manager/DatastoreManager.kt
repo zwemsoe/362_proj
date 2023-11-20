@@ -1,4 +1,4 @@
-package com.example.travelassistant
+package com.example.travelassistant.manager
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit

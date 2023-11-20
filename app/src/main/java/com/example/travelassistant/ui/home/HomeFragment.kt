@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.travelassistant.R
-import com.example.travelassistant.DataStoreManager
+import com.example.travelassistant.manager.DataStoreManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
