@@ -3,12 +3,14 @@ package com.example.travelassistant.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.travelassistant.models.user.TodoItem
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _user = MutableLiveData<User>()
@@ -22,9 +24,9 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
-    fun onboard(id: String, displayName: String, currentLocation: GeoPoint) {
+    fun onboard(id: String, displayName: String, currentLocation: GeoPoint, keepLocationPrivate: Boolean) {
         viewModelScope.launch {
-            userRepository.onboard(id, displayName, currentLocation)
+            userRepository.onboard(id, displayName, currentLocation, keepLocationPrivate = keepLocationPrivate)
         }
     }
 
@@ -54,5 +56,15 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
             userRepository.deleteTodoItem(userId, todoId)
             _user.value?.todoList?.let { _user.value = _user.value?.copy(todoList = it.filterNot { item -> item.task == todoId }) }
         }
+    }
+}
+
+
+class UserViewModelFactory(private val repository: UserRepository) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(UserViewModel::class.java))
+            return UserViewModel(repository) as T
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

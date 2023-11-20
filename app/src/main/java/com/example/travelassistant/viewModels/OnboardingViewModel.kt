@@ -1,9 +1,7 @@
 package com.example.travelassistant.viewModels
 
 import android.app.Activity
-import android.location.Address
 import android.location.Geocoder
-import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,12 +13,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
 
-class LocationViewModel : ViewModel() {
+class OnboardingViewModel : ViewModel() {
     private val _locationLatLng = MutableLiveData<LatLng>()
     val locationLatLng: LiveData<LatLng> = _locationLatLng
 
-    private val _address = MutableLiveData<Address?>()
-    val address: LiveData<Address?> = _address
+    private val _address = MutableLiveData<String?>()
+    val address: LiveData<String?> = _address
+
+    private val _displayName = MutableLiveData<String>()
+    val displayName: LiveData<String> = _displayName
+
+
+    fun updateDisplayName(name: String) {
+        _displayName.postValue(name)
+    }
 
 
     @Suppress("DEPRECATION")
@@ -32,8 +38,8 @@ class LocationViewModel : ViewModel() {
 
                 val geocoder = Geocoder(activity, Locale.getDefault())
                 val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                if (!addresses.isNullOrEmpty()){
-                    _address.postValue(addresses[0])
+                if (!addresses.isNullOrEmpty()) {
+                    _address.postValue(addresses[0].getAddressLine(0))
                 }
                 _locationLatLng.postValue(LatLng(location.latitude, location.longitude))
             } catch (e: Exception) {

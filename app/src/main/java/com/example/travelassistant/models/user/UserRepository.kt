@@ -18,8 +18,18 @@ class UserRepository {
     }
 
     // Mutations
-    suspend fun onboard(id: String, displayName: String, currentLocation: GeoPoint) {
-        val user = User(id=id, displayName=displayName, currentLocation=currentLocation)
+    suspend fun onboard(
+        id: String,
+        displayName: String,
+        currentLocation: GeoPoint,
+        keepLocationPrivate: Boolean
+    ) {
+        val user = User(
+            id = id,
+            displayName = displayName,
+            currentLocation = currentLocation,
+            keepLocationPrivate = keepLocationPrivate
+        )
         usersCollection.document(user.id).set(user).await()
     }
 
@@ -27,7 +37,7 @@ class UserRepository {
         usersCollection.document(userId).update("displayName", name).await()
     }
 
-    suspend fun updatePoints(userId: String, newPoints: Int){
+    suspend fun updatePoints(userId: String, newPoints: Int) {
         usersCollection.document(userId).update("points", newPoints).await()
     }
 
