@@ -33,9 +33,10 @@
             android:textSize="24sp" />
 
         <TextView
+            android:id="@+id/user_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="8888 University Dr W, Burnab..."
+            android:text="Sorry, we could not find your address."
             android:textSize="18sp" />
     </LinearLayout>
 
