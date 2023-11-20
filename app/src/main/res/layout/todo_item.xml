@@ -9,11 +9,25 @@
         android:id="@+id/checkbox_todo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
     <TextView
         android:id="@+id/textview_todo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:textSize="14sp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="38dp"
+            android:layout_height="40dp"
+            android:text="X"
+            android:visibility="invisible"
+            android:textSize="14sp"
+            android:layout_marginTop="0dp"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
 </LinearLayout>
