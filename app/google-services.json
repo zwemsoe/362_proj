@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "955339712796",
+    "project_id": "cmpt362-ce124",
+    "storage_bucket": "cmpt362-ce124.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955339712796:android:8e7626319f41fe2e7df2d9",
+        "android_client_info": {
+          "package_name": "com.example.travelassistant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHXFfzlzOpevbTQDsFYeWl8E-Dfjlg6lM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
