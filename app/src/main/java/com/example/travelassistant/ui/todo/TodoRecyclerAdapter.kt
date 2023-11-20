@@ -1,4 +1,4 @@
-package com.example.travelassistant.ui.gallery
+package com.example.travelassistant.ui.todo
 
 import android.graphics.Paint
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.travelassistant.R
 
 
-class GalleryRecyclerAdapter(items : ArrayList<String>, itemsFinish : ArrayList<Boolean>) : RecyclerView.Adapter<GalleryRecyclerAdapter.ViewHolder>() {
+class TodoRecyclerAdapter(items : ArrayList<String>, itemsFinish : ArrayList<Boolean>) : RecyclerView.Adapter<TodoRecyclerAdapter.ViewHolder>() {
     private var todoItemList = items
     private var todoFinishList = itemsFinish
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

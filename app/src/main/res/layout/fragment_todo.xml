@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="30dp"
     android:paddingVertical="20dp"
-    tools:context=".ui.gallery.GalleryFragment">
+    tools:context=".ui.todo.TodoFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
