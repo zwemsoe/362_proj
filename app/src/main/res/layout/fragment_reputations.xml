@@ -5,10 +5,44 @@
     android:layout_height="match_parent"
     tools:context=".ui.reputations.ReputationsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="User Reputations Fragment" />
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/imageViewProfile"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_profile_image"
+            android:contentDescription="@string/profile_image_description"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/textViewReputationPoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your reputation point is 9!\nWhich means you have visited 9 unique locations so far!"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/textViewReputationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Most Reputable Users"
+            android:layout_marginTop="16dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ListView
+            android:id="@+id/listViewReputations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="0.5dp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
 
 </FrameLayout>
