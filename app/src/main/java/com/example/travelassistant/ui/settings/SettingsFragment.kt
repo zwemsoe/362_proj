@@ -1,9 +1,6 @@
 package com.example.travelassistant.ui.settings
 
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +35,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.model.PlaceTypes
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -79,7 +75,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         view = inflater.inflate(R.layout.fragment_settings, container, false)
         locationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         if (!Places.isInitialized()) {
-            Places.initialize(requireContext(), BuildConfig.GOOGLE_MAPS_API_KEY);
+            Places.initialize(requireContext(), BuildConfig.GOOGLE_MAPS_API_KEY)
         }
 
         return view
@@ -121,7 +117,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         }
 
         onboardingViewModel.address.observe(viewLifecycleOwner) {
-            if (it != null && useLiveLocation) {
+            if (it != null) {
                 userLocationTextView.setText(it)
             }
         }
@@ -151,7 +147,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
 
     private fun initVars() {
         onboardingViewModel =
-            ViewModelProvider(requireActivity()).get(OnboardingViewModel::class.java)
+            ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
         nameTextView = view.findViewById(R.id.display_name_settings)
         saveSettingsButton = view.findViewById(R.id.save_settings_button)
         initEditLocationAutoComplete()
@@ -163,7 +159,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
             requireActivity(), UserViewModelFactory(userRepository)
-        ).get(UserViewModel::class.java)
+        )[UserViewModel::class.java]
         placesClient = Places.createClient(requireContext())
     }
 
