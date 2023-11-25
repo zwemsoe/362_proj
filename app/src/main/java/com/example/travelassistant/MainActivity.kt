@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home,
                 R.id.nav_todo,
                 R.id.nav_myevents,
+                R.id.nav_myprofile,
                 R.id.nav_user_reputations,
                 R.id.nav_settings
             ), drawerLayout
