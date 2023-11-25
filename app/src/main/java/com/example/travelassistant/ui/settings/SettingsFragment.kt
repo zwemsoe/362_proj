@@ -146,15 +146,12 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun initVars() {
-        onboardingViewModel =
-            ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
+        onboardingViewModel = ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
         nameTextView = view.findViewById(R.id.display_name_settings)
         saveSettingsButton = view.findViewById(R.id.save_settings_button)
         initEditLocationAutoComplete()
         keepPrivateCheckBox = view.findViewById(R.id.keep_private)
         editLocationButton = view.findViewById(R.id.edit_my_location)
-//        autoCompleteFragment =
-//            childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
 
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
@@ -178,25 +175,18 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
      */
     private fun findAutocompletePredictions(query: String) {
         fun buildRequest(token: AutocompleteSessionToken): FindAutocompletePredictionsRequest {
-            return FindAutocompletePredictionsRequest
-                .builder()
-//                .setTypesFilter(listOf(PlaceTypes.ADDRESS))
-                .setSessionToken(token).setQuery(query).build()
+            return FindAutocompletePredictionsRequest.builder().setSessionToken(token)
+                .setQuery(query).build()
         }
 
         fun onSuccess(response: FindAutocompletePredictionsResponse) {
             val locations = mutableListOf<String>()
             for (prediction in response.autocompletePredictions) {
-                println(prediction.placeId)
-                println(prediction.getFullText(null).toString())
                 locations.add(prediction.getFullText(null).toString())
             }
-            val adapter: ArrayAdapter<String> =
-                ArrayAdapter<String>(
-                    requireContext(),
-                    android.R.layout.simple_dropdown_item_1line,
-                    locations
-                )
+            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+                requireContext(), android.R.layout.simple_dropdown_item_1line, locations
+            )
             userLocationTextView.threshold = 2
             userLocationTextView.setAdapter(adapter)
         }
@@ -207,11 +197,9 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-        println(query)
         val token = AutocompleteSessionToken.newInstance()
         val request = buildRequest(token)
-        placesClient.findAutocompletePredictions(request)
-            .addOnSuccessListener(::onSuccess)
+        placesClient.findAutocompletePredictions(request).addOnSuccessListener(::onSuccess)
             .addOnFailureListener(::onFailure)
     }
 
@@ -227,8 +215,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             val latLng = LatLng(it.latitude, it.longitude)
             marker?.remove()
             marker = googleMap.addMarker(
-                MarkerOptions().position(latLng).title("You")
-                    .icon(markerIcon)
+                MarkerOptions().position(latLng).title("You").icon(markerIcon)
             )
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
             googleMap.animateCamera(cameraUpdate)
