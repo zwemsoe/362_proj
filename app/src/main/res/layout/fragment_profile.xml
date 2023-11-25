@@ -21,32 +21,63 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Unknown"
+        android:textSize="30sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textStyle="bold"
         android:layout_gravity="center" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Joined us on"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+    <TextView
         android:id="@+id/profile_join_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Joined us on"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:text="June 2023"
+        android:textSize="30sp"
+        android:textColor="#5061FF"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Last visited"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/profile_last_visited"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:text="Last visited"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:text="Simon Fraser University"
+        android:textSize="30sp"
+        android:textColor="#5061FF"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Reputation point is"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/profile_reputation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:text="Reputation point is"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:text="10"
+        android:textSize="30sp"
+        android:textColor="#5061FF"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
 </LinearLayout>
