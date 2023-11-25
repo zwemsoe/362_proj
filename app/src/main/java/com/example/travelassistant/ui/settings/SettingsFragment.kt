@@ -92,7 +92,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             val currentLocation =
                 onboardingViewModel.locationLatLng.value ?: return@setOnClickListener
 
-            val location = GeoPoint(currentLocation!!.latitude, currentLocation!!.longitude)
+            val location = GeoPoint(currentLocation.latitude, currentLocation.longitude)
             val keepLocationPrivate = keepPrivateCheckBox.isChecked
             if (!displayName.isNullOrEmpty() && location != null) {
                 userViewModel.onboard(userId, displayName, location, keepLocationPrivate)
