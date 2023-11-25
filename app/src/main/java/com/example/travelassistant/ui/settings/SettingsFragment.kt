@@ -72,13 +72,16 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             val userId = UUID.randomUUID().toString()
             val displayName = onboardingViewModel.displayName.value
             val currentLocation = onboardingViewModel.locationLatLng.value
-            val location = GeoPoint(currentLocation!!.latitude, currentLocation.longitude)
-            val keepLocationPrivate = keepPrivateCheckBox.isChecked
-            if (!displayName.isNullOrEmpty() && location != null) {
-                userViewModel.onboard(userId, displayName, location, keepLocationPrivate)
-                storeUserId(userId)
+            // check Null
+            if (currentLocation != null) {
+                val location = GeoPoint(currentLocation!!.latitude, currentLocation.longitude)
+                val keepLocationPrivate = keepPrivateCheckBox.isChecked
+                if (!displayName.isNullOrEmpty() && location != null) {
+                    userViewModel.onboard(userId, displayName, location, keepLocationPrivate)
+                    storeUserId(userId)
+                }
+                findNavController().navigate(R.id.action_nav_settings_to_nav_home)
             }
-            findNavController().navigate(R.id.action_nav_settings_to_nav_home)
         }
 
         onboardingViewModel.address.observe(viewLifecycleOwner) {
@@ -104,9 +107,9 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
 
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
-            requireActivity(),
+            this@SettingsFragment,
             UserViewModelFactory(userRepository)
-        ).get(UserViewModel::class.java)
+        )[UserViewModel::class.java]
     }
 
     private fun storeUserId(id: String) {
