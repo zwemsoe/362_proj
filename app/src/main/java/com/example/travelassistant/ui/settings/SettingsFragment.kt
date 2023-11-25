@@ -89,11 +89,9 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         saveSettingsButton.setOnClickListener {
             val userId = UUID.randomUUID().toString()
             val displayName = onboardingViewModel.displayName.value
-            val currentLocation = onboardingViewModel.locationLatLng.value
-            // check Null
-            if (currentLocation == null) {
-                return@setOnClickListener
-            }
+            val currentLocation =
+                onboardingViewModel.locationLatLng.value ?: return@setOnClickListener
+
             val location = GeoPoint(currentLocation!!.latitude, currentLocation!!.longitude)
             val keepLocationPrivate = keepPrivateCheckBox.isChecked
             if (!displayName.isNullOrEmpty() && location != null) {
