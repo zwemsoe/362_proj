@@ -21,20 +21,29 @@
             android:layout_gravity="center_horizontal" />
 
         <TextView
-            android:id="@+id/textViewReputationPoints"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Your reputation point is 9!\nWhich means you have visited 9 unique locations so far!"
-            android:layout_marginTop="8dp"
-            android:gravity="center_horizontal" />
-
-        <TextView
             android:id="@+id/textViewReputationTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Your reputation point is 9!"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/textViewReputationDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\nWhich means you have visited 9 unique locations so far!"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Most Reputable Users"
-            android:layout_marginTop="16dp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_marginTop="45dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
         <ListView
             android:id="@+id/listViewReputations"

@@ -90,7 +90,11 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             val userId = UUID.randomUUID().toString()
             val displayName = onboardingViewModel.displayName.value
             val currentLocation = onboardingViewModel.locationLatLng.value
-            val location = GeoPoint(currentLocation!!.latitude, currentLocation.longitude)
+            // check Null
+            if (currentLocation == null) {
+                return@setOnClickListener
+            }
+            val location = GeoPoint(currentLocation!!.latitude, currentLocation!!.longitude)
             val keepLocationPrivate = keepPrivateCheckBox.isChecked
             if (!displayName.isNullOrEmpty() && location != null) {
                 userViewModel.onboard(userId, displayName, location, keepLocationPrivate)
@@ -155,7 +159,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
 
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
-            requireActivity(), UserViewModelFactory(userRepository)
+            this@SettingsFragment, UserViewModelFactory(userRepository)
         )[UserViewModel::class.java]
         placesClient = Places.createClient(requireContext())
     }

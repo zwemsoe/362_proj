@@ -2,9 +2,11 @@ package com.example.travelassistant
 
 import android.os.Bundle
 import android.view.Menu
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
@@ -15,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.aallam.openai.api.chat.ChatCompletionChunk
 import com.example.travelassistant.databinding.ActivityMainBinding
 import com.example.travelassistant.openai.TravelAssistant
+import com.example.travelassistant.viewModels.OnboardingViewModel
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -33,8 +36,17 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.appBarMain.toolbar)
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        val navView: NavigationView = binding.navView
+        val headerView = navView.getHeaderView(0)
+        val profileNameTextView = headerView.findViewById<TextView>(R.id.profile_name)
+        val onboardingViewModel = ViewModelProvider(this)[OnboardingViewModel::class.java]
+
+        onboardingViewModel.displayName.observe(this) { displayName ->
+            profileNameTextView.text = displayName ?: "Unknown"
+        }
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -42,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home,
                 R.id.nav_todo,
                 R.id.nav_myevents,
+                R.id.nav_myprofile,
                 R.id.nav_user_reputations,
                 R.id.nav_settings
             ), drawerLayout
