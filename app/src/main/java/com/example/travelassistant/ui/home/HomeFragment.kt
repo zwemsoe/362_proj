@@ -9,10 +9,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import com.example.travelassistant.R
 import com.example.travelassistant.manager.DataStoreManager
+import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.utils.CoordinatesUtil.getAddressFromLocation
+import com.example.travelassistant.viewModels.UserViewModel
+import com.example.travelassistant.viewModels.UserViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -20,8 +26,10 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var inflater: LayoutInflater
     private lateinit var suggestionsContainer: LinearLayout
-
+    private lateinit var userLocationTextView: TextView
     private lateinit var dataStoreManager: DataStoreManager
+    private lateinit var userRepository: UserRepository
+    private lateinit var userViewModel: UserViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -33,15 +41,43 @@ class HomeFragment : Fragment() {
     ): View {
         this.inflater = inflater
         view = inflater.inflate(R.layout.fragment_home, container, false)
-        suggestionsContainer = view.findViewById(R.id.question_suggestions_container)
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initVars()
+        listenCurrentUserChanges()
         setupSuggestions()
         observeDataStoreChanges()
+    }
+
+    private fun initVars() {
+        suggestionsContainer = view.findViewById(R.id.question_suggestions_container)
+        userLocationTextView = view.findViewById(R.id.home_user_location_text)
+
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        userRepository = UserRepository()
+        userViewModel = ViewModelProvider(
+            this, UserViewModelFactory(userRepository)
+        )[UserViewModel::class.java]
+    }
+
+    private fun listenCurrentUserChanges() {
+        dataStoreManager.userIdFlow.asLiveData().observe(viewLifecycleOwner) { userId ->
+            userViewModel.getUser(userId)
+        }
+        userViewModel.user.observe(viewLifecycleOwner) { user ->
+            if (user.currentLocation == null) {
+                return@observe
+            }
+            getAddressFromLocation(requireContext(), user.currentLocation, {
+                if (it.isNotEmpty()) {
+                    userLocationTextView.text = it[0].getAddressLine(0)
+                }
+            })
+        }
     }
 
     private fun setupSuggestions() {
@@ -56,17 +92,14 @@ class HomeFragment : Fragment() {
             }
             suggestionsContainer.removeAllViews()
             suggestions.forEach { suggestion ->
-                val todoView =
-                    inflater.inflate(
-                        R.layout.question_suggestion_bubble,
-                        suggestionsContainer,
-                        false
-                    )
-                val suggestionTextView = todoView.findViewById<TextView>(
+                val suggestionView = inflater.inflate(
+                    R.layout.question_suggestion_bubble, suggestionsContainer, false
+                )
+                val suggestionTextView = suggestionView.findViewById<TextView>(
                     R.id.textview_question_suggestion
                 )
                 suggestionTextView.text = "\"$suggestion\""
-                suggestionsContainer.addView(todoView)
+                suggestionsContainer.addView(suggestionView)
             }
         }
         viewModel.generateSuggestions()
