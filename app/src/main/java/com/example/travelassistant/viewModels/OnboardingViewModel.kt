@@ -1,7 +1,10 @@
 package com.example.travelassistant.viewModels
 
 import android.app.Activity
+import android.content.Context
+import android.location.Address
 import android.location.Geocoder
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -47,8 +50,26 @@ class OnboardingViewModel : ViewModel() {
         }
     }
 
-    fun refreshLocation() {
-        _address.value = _address.value
-        _locationLatLng.value = _locationLatLng.value
+    fun setLocationFromAddress(context: Context, address: String) {
+        viewModelScope.launch {
+            println("setLocationFromAddress 1")
+            fun handleSelectedLocation(addresses: List<Address>) {
+                println("setLocationFromAddress 2")
+                if (addresses.isNotEmpty()) {
+                    val location = addresses[0]
+                    println("setLocationFromAddress 3")
+                    _address.postValue(address)
+                    _locationLatLng.postValue(LatLng(location.latitude, location.longitude))
+                }
+            }
+            println("setLocationFromAddress 4")
+            val geocoder = Geocoder(context)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                geocoder.getFromLocationName(address, 1, ::handleSelectedLocation)
+            } else {
+                val addresses = geocoder.getFromLocationName(address, 1) ?: return@launch
+                handleSelectedLocation(addresses)
+            }
+        }
     }
 }

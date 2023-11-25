@@ -34,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
@@ -61,13 +62,10 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var userViewModel: UserViewModel
     private lateinit var userRepository: UserRepository
     private lateinit var dataStoreManager: DataStoreManager
-
     private lateinit var editLocationButton: ImageButton
-
-    private var useLiveLocation = true
-
-    //    private lateinit var autoCompleteFragment: AutocompleteSupportFragment
     private lateinit var placesClient: PlacesClient
+    private var marker: Marker? = null
+    private var useLiveLocation = true
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -110,6 +108,10 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             onAutoCompleteItemClick(selected)
         }
         userLocationTextView.doAfterTextChanged {
+            if (it.toString().length < 2) {
+                // Save some API calls, wait for longer entry
+                return@doAfterTextChanged
+            }
             findAutocompletePredictions(it.toString())
         }
 
@@ -135,7 +137,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         if (useLiveLocation) {
             editLocationButton.setImageResource(R.drawable.ic_edit)
             userLocationTextView.isEnabled = false
-            onboardingViewModel.refreshLocation()
+            onboardingViewModel.fetchLastLocation(requireActivity(), locationProviderClient)
         } else {
             editLocationButton.setImageResource(R.drawable.ic_my_location)
             userLocationTextView.isEnabled = true
@@ -172,22 +174,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun onAutoCompleteItemClick(itemSelected: String) {
-        fun handleSelectedLocation(addresses: List<Address>) {
-            if (addresses.isNotEmpty()) {
-                val location = addresses[0]
-                val latitude = location.latitude
-                val longitude = location.longitude
-                // TODO
-            }
-        }
-
-        val geocoder = Geocoder(requireContext())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            geocoder.getFromLocationName("address", 1, ::handleSelectedLocation)
-        } else {
-            val addresses = geocoder.getFromLocationName(itemSelected, 1) ?: return
-            handleSelectedLocation(addresses)
-        }
+        onboardingViewModel.setLocationFromAddress(requireContext(), itemSelected)
     }
 
     /**
@@ -242,7 +229,8 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         val markerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
         onboardingViewModel.locationLatLng.observe(viewLifecycleOwner) {
             val latLng = LatLng(it.latitude, it.longitude)
-            googleMap.addMarker(
+            marker?.remove()
+            marker = googleMap.addMarker(
                 MarkerOptions().position(latLng).title("You")
                     .icon(markerIcon)
             )
