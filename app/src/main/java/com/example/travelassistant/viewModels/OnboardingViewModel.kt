@@ -28,7 +28,6 @@ class OnboardingViewModel : ViewModel() {
         _displayName.postValue(name)
     }
 
-
     @Suppress("DEPRECATION")
     fun fetchLastLocation(activity: Activity, locationProviderClient: FusedLocationProviderClient) {
         viewModelScope.launch {
@@ -46,5 +45,10 @@ class OnboardingViewModel : ViewModel() {
                 println("Error with checking/requesting permission")
             }
         }
+    }
+
+    fun refreshLocation() {
+        _address.value = _address.value
+        _locationLatLng.value = _locationLatLng.value
     }
 }
