@@ -35,7 +35,7 @@ class OnboardingViewModel : ViewModel() {
     fun fetchLastLocation(activity: Activity, locationProviderClient: FusedLocationProviderClient) {
         viewModelScope.launch {
             try {
-                PermissionUtil.checkLocationPermission(activity);
+                PermissionUtil.checkLocationPermission(activity)
                 val location = locationProviderClient.lastLocation.await()
 
                 val geocoder = Geocoder(activity, Locale.getDefault())
@@ -50,19 +50,17 @@ class OnboardingViewModel : ViewModel() {
         }
     }
 
+    @Suppress("DEPRECATION")
     fun setLocationFromAddress(context: Context, address: String) {
         viewModelScope.launch {
-            println("setLocationFromAddress 1")
             fun handleSelectedLocation(addresses: List<Address>) {
-                println("setLocationFromAddress 2")
                 if (addresses.isNotEmpty()) {
                     val location = addresses[0]
-                    println("setLocationFromAddress 3")
                     _address.postValue(address)
                     _locationLatLng.postValue(LatLng(location.latitude, location.longitude))
                 }
             }
-            println("setLocationFromAddress 4")
+
             val geocoder = Geocoder(context)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 geocoder.getFromLocationName(address, 1, ::handleSelectedLocation)
