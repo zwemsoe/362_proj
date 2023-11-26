@@ -19,14 +19,18 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun getUser(userId: String) {
         viewModelScope.launch {
             userRepository.getById(userId).collect { userData ->
-                _user.value = userData
+                _user.postValue(userData)
             }
         }
     }
 
-    fun onboard(id: String, displayName: String, currentLocation: GeoPoint, keepLocationPrivate: Boolean) {
+    fun onboard(
+        id: String, displayName: String, currentLocation: GeoPoint, keepLocationPrivate: Boolean
+    ) {
         viewModelScope.launch {
-            userRepository.onboard(id, displayName, currentLocation, keepLocationPrivate = keepLocationPrivate)
+            userRepository.onboard(
+                id, displayName, currentLocation, keepLocationPrivate = keepLocationPrivate
+            )
         }
     }
 
@@ -54,17 +58,18 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun deleteTodoItem(userId: String, todoId: String) {
         viewModelScope.launch {
             userRepository.deleteTodoItem(userId, todoId)
-            _user.value?.todoList?.let { _user.value = _user.value?.copy(todoList = it.filterNot { item -> item.task == todoId }) }
+            _user.value?.todoList?.let {
+                _user.value =
+                    _user.value?.copy(todoList = it.filterNot { item -> item.task == todoId })
+            }
         }
     }
 }
 
 
-class UserViewModelFactory(private val repository: UserRepository) :
-    ViewModelProvider.Factory {
+class UserViewModelFactory(private val repository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(UserViewModel::class.java))
-            return UserViewModel(repository) as T
+        if (modelClass.isAssignableFrom(UserViewModel::class.java)) return UserViewModel(repository) as T
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

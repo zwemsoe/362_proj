@@ -9,17 +9,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import com.example.travelassistant.R
 import com.example.travelassistant.manager.DataStoreManager
+import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CoordinatesUtil.getAddressFromLocation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
     private lateinit var view: View
@@ -65,18 +66,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun listenCurrentUserChanges() {
-        dataStoreManager.userIdFlow.asLiveData().observe(viewLifecycleOwner) { userId ->
-            userViewModel.getUser(userId)
-        }
         userViewModel.user.observe(viewLifecycleOwner) { user ->
             if (user.currentLocation == null) {
                 return@observe
             }
-            getAddressFromLocation(requireContext(), user.currentLocation, {
-                if (it.isNotEmpty()) {
-                    userLocationTextView.text = it[0].getAddressLine(0)
+            setUserLocationText(user)
+        }
+    }
+
+    private fun setUserLocationText(user: User) {
+        lifecycleScope.launch {
+            val addressList = getAddressFromLocation(requireContext(), user.currentLocation!!)
+            withContext(Dispatchers.Main) {
+                if (addressList.isNotEmpty()) {
+                    userLocationTextView.text = addressList[0].getAddressLine(0)
                 }
-            })
+            }
         }
     }
 
@@ -109,6 +114,7 @@ class HomeFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             dataStoreManager.userIdFlow.collect { userId ->
                 println("ACCESS USERID HERE: $userId")
+                userViewModel.getUser(userId)
             }
         }
     }

@@ -5,12 +5,17 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 object CoordinatesUtil {
-    fun getLatLng(geoPoint: GeoPoint): LatLng {
-        return LatLng(geoPoint.latitude, geoPoint.longitude)
+    suspend fun getAddressFromLocation(
+        context: Context, geoPoint: GeoPoint, maxResults: Int = 1
+    ): List<Address> = suspendCoroutine { continuation ->
+        getAddressFromLocation(context, geoPoint.latitude, geoPoint.longitude, { addresses ->
+            continuation.resume(addresses)
+        }, maxResults)
     }
 
     fun getAddressFromLocation(
@@ -19,6 +24,7 @@ object CoordinatesUtil {
         getAddressFromLocation(context, location.latitude, location.longitude, callback, maxResults)
     }
 
+    @Suppress("unused")
     fun getAddressFromLocation(
         context: Context, geoPoint: GeoPoint, callback: (List<Address>) -> Unit, maxResults: Int = 1
     ) {
