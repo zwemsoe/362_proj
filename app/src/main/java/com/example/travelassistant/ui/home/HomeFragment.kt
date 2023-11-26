@@ -1,13 +1,18 @@
 package com.example.travelassistant.ui.home
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.travelassistant.R
@@ -31,6 +36,9 @@ class HomeFragment : Fragment() {
     private lateinit var dataStoreManager: DataStoreManager
     private lateinit var userRepository: UserRepository
     private lateinit var userViewModel: UserViewModel
+    private lateinit var questionEditText: EditText
+    private lateinit var answerContainer: ScrollView
+    private lateinit var suggestionsOuterContainer: LinearLayout
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -49,6 +57,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initVars()
+        initEditTextListener()
         listenCurrentUserChanges()
         setupSuggestions()
         observeDataStoreChanges()
@@ -57,12 +66,39 @@ class HomeFragment : Fragment() {
     private fun initVars() {
         suggestionsContainer = view.findViewById(R.id.question_suggestions_container)
         userLocationTextView = view.findViewById(R.id.home_user_location_text)
+        questionEditText = view.findViewById(R.id.home_question_input)
+        answerContainer = view.findViewById(R.id.answer_scroll_view)
+        suggestionsOuterContainer = view.findViewById(R.id.home_suggestions)
 
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
             this, UserViewModelFactory(userRepository)
         )[UserViewModel::class.java]
+    }
+
+    private fun initEditTextListener() {
+        questionEditText.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val text = v.text
+                println("IME_ACTION_DONE: $text")
+                hideSuggestionsOnQuestionSubmit()
+                displayAnswerContainer()
+                true
+            }
+            false
+        }
+    }
+
+    private fun hideSuggestionsOnQuestionSubmit() {
+        suggestionsOuterContainer.visibility = View.GONE
+    }
+
+    private fun displayAnswerContainer() {
+        answerContainer.visibility = View.VISIBLE
+        val displayMetrics = Resources.getSystem().displayMetrics
+        val screenHeight = displayMetrics.heightPixels
+        answerContainer.layoutParams.height = screenHeight / 2
     }
 
     private fun listenCurrentUserChanges() {
