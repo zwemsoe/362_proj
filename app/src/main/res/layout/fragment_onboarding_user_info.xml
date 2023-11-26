@@ -50,11 +50,21 @@
             android:text="What's your name?"
             android:textSize="28sp" />
 
+
         <EditText
-            android:id="@+id/display_name_input"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:hint="John Doe" />
+            android:id="@+id/first_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="First Name"
+            android:background="@drawable/edit_text_area" />
+
+        <EditText
+            android:id="@+id/last_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Last Name"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/edit_text_area" />
 
 
     </LinearLayout>
