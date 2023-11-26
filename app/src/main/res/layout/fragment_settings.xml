@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:id="@+id/settings_greeting_location_container"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
         android:orientation="vertical"
@@ -33,12 +33,33 @@
             android:text="Looks like you are at"
             android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/user_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sorry, we could not find your address."
-            android:textSize="18sp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/user_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:hint="Current location..."
+                android:maxLines="2"
+                android:minHeight="48dp"
+                android:text=""
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/edit_my_location"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/edit_my_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
 
