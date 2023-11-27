@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -13,8 +14,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.travelassistant.databinding.ActivityMainBinding
-import com.example.travelassistant.viewModels.OnboardingViewModel
+import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.viewModels.UserViewModel
+import com.example.travelassistant.viewModels.UserViewModelFactory
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var userRepository: UserRepository
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,16 +41,33 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        auth = FirebaseAuth.getInstance()
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navController = findNavController(R.id.nav_host_fragment_content_main)
 
         val navView: NavigationView = binding.navView
         val headerView = navView.getHeaderView(0)
-        val profileNameTextView = headerView.findViewById<TextView>(R.id.profile_name)
-        val onboardingViewModel = ViewModelProvider(this)[OnboardingViewModel::class.java]
+        val nameTextView = headerView.findViewById<TextView>(R.id.header_profile_name)
+        val emailTextView = headerView.findViewById<TextView>(R.id.header_profile_email)
+        val imageView: ImageView = headerView.findViewById(R.id.header_profile_image)
 
-        onboardingViewModel.displayName.observe(this) { displayName ->
-            profileNameTextView.text = displayName ?: "Unknown"
+        userRepository = UserRepository()
+        userViewModel = ViewModelProvider(
+            this, UserViewModelFactory(userRepository)
+        )[UserViewModel::class.java]
+
+        userViewModel.getUser(auth.currentUser!!.uid)
+
+        userViewModel.user.observe(this) {
+            if (it != null){
+                nameTextView.text = it.displayName
+                emailTextView.text = it.email
+                Glide.with(this)
+                    .load(auth.currentUser!!.photoUrl)
+                    .into(imageView)
+            }
+
         }
 
         // Passing each menu ID as a set of Ids because each
