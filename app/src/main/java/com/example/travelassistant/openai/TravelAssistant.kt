@@ -1,11 +1,7 @@
 package com.example.travelassistant.openai
 
-import androidx.lifecycle.asFlow
-import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatCompletionChunk
 import com.aallam.openai.api.chat.ChatCompletionRequest
-import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.exception.OpenAIAPIException
 import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.model.ModelId
@@ -13,10 +9,8 @@ import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
 import com.aallam.openai.client.RetryStrategy
 import com.example.travelassistant.BuildConfig
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlin.time.Duration.Companion.seconds
 
 

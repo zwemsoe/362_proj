@@ -25,11 +25,11 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     }
 
     fun onboard(
-        id: String, displayName: String, currentLocation: GeoPoint, keepLocationPrivate: Boolean
+        id: String, displayName: String, email: String, currentLocation: GeoPoint, keepLocationPrivate: Boolean
     ) {
         viewModelScope.launch {
             userRepository.onboard(
-                id, displayName, currentLocation, keepLocationPrivate = keepLocationPrivate
+                id, displayName, email, currentLocation, keepLocationPrivate = keepLocationPrivate
             )
         }
     }

@@ -6,14 +6,12 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <!-- Google Maps & Location Services -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- Google Maps & Location Services -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-
 
     <application
         android:allowBackup="true"
@@ -25,6 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelAssistant"
         tools:targetApi="31">
+        <activity
+            android:name=".SignInActivity"
+            android:exported="false" />
         <activity
             android:name=".SplashScreenActivity"
             android:exported="true"
