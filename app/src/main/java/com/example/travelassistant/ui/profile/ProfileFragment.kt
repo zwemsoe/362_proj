@@ -1,5 +1,6 @@
 package com.example.travelassistant.ui.profile
 
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +15,8 @@ import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CommonUtil
 import com.example.travelassistant.utils.CoordinatesUtil
-import com.example.travelassistant.viewModels.UserViewModel
-import com.example.travelassistant.viewModels.UserViewModelFactory
+import com.example.travelassistant.viewModels.ProfileViewModel
+import com.example.travelassistant.viewModels.ProfileViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,7 @@ import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
     private lateinit var userRepository: UserRepository
-    private lateinit var userViewModel: UserViewModel
+    private lateinit var profileViewModel: ProfileViewModel
     private lateinit var auth: FirebaseAuth
     private lateinit var locationTextView: TextView
 
@@ -40,11 +41,9 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         userRepository = UserRepository()
-        userViewModel = ViewModelProvider(
-            this, UserViewModelFactory(userRepository)
-        )[UserViewModel::class.java]
-
-        userViewModel.getUser(auth.currentUser!!.uid)
+        profileViewModel = ViewModelProvider(
+            requireActivity(), ProfileViewModelFactory(userRepository)
+        )[ProfileViewModel::class.java]
 
         locationTextView = view.findViewById(R.id.profile_last_visited)
         val profileNameTextView = view.findViewById<TextView>(R.id.profile_name)
@@ -52,19 +51,30 @@ class ProfileFragment : Fragment() {
         val joinedTextView = view.findViewById<TextView>(R.id.profile_join_date)
         val profileImage = view.findViewById<ImageView>(R.id.profile_image)
 
-        userViewModel.user.observe(viewLifecycleOwner) {
-            profileNameTextView.text = it.displayName
-            reputationTextView.text = it.points.toString()
-            joinedTextView.text = CommonUtil.formatDate(it.createdAt)
-            Glide.with(this)
-                .load(auth.currentUser!!.photoUrl)
-                .into(profileImage)
+        val profileId = arguments?.getString(PROFILE_ID)
 
-            if(it.currentLocation != null){
-                setCurrentLocation(it.currentLocation)
+        if(profileId == null){
+            profileViewModel.getUser(auth.currentUser!!.uid)
+        }
+
+        profileViewModel.user.observe(viewLifecycleOwner) {
+            if(it != null){
+                profileNameTextView.text = it.displayName
+                reputationTextView.text = it.points.toString()
+                joinedTextView.text = CommonUtil.formatDate(it.createdAt)
+                if (it.imageUrl.toString().isNotEmpty()) {
+                    Glide.with(this)
+                        .load(it.imageUrl)
+                        .into(profileImage)
+                }
+
+                if(it.currentLocation != null && !it.keepLocationPrivate){
+                    setCurrentLocation(it.currentLocation)
+                }
             }
         }
     }
+
 
     private fun setCurrentLocation(currentLocation: GeoPoint){
         lifecycleScope.launch {
@@ -76,5 +86,9 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
+    }
+
+    companion object{
+        val PROFILE_ID = "profile_id"
     }
 }
