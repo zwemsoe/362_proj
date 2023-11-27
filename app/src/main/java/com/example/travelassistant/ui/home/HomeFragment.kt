@@ -62,7 +62,7 @@ class HomeFragment : Fragment() {
 
     private fun listenCurrentUserChanges() {
         userViewModel.user.observe(viewLifecycleOwner) { user ->
-            if (user.currentLocation == null) {
+            if (user != null && user.currentLocation == null) {
                 return@observe
             }
             setUserLocationText(user)

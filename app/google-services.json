@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "955339712796-tgalc2j0b47ob0cg1o80cf69vkjbgist.apps.googleusercontent.com",
+          "client_id": "955339712796-havrdmeeh91mse1i2hjvrkpfblgo6dsr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.travelassistant",
-            "certificate_hash": "7c593829b6dd4cdb3471b2ac29eba289e2de5adf"
+            "certificate_hash": "38fa9658c9b250d7c1042a16a50b809ab117a84c"
           }
         },
         {
