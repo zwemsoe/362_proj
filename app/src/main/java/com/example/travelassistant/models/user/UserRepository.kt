@@ -41,7 +41,7 @@ class UserRepository {
             id = id,
             displayName = displayName,
             email = email,
-            imageUrl = imageUrl,
+            imageUrl = imageUrl.toString(),
             currentLocation = currentLocation,
             keepLocationPrivate = keepLocationPrivate
         )
