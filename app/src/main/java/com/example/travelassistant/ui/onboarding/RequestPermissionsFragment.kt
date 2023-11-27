@@ -14,10 +14,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.postDelayed
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.travelassistant.R
+import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.PermissionUtil
 import com.example.travelassistant.utils.slideUpAnimation
+import com.example.travelassistant.viewModels.UserViewModel
+import com.example.travelassistant.viewModels.UserViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import java.util.Timer
 import kotlin.concurrent.schedule
@@ -26,6 +31,9 @@ private const val NAVIGATION_DELAY = 3000L
 
 class RequestPermissionsFragment : Fragment() {
     private lateinit var view: View
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var userRepository: UserRepository
+    private lateinit var auth: FirebaseAuth
     private val permissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -47,7 +55,7 @@ class RequestPermissionsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
+        auth = FirebaseAuth.getInstance()
         view = inflater.inflate(R.layout.fragment_request_permissions, container, false)
 
         requestPermissionsButton = view.findViewById(R.id.button_request_permissions)
@@ -56,6 +64,13 @@ class RequestPermissionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        userRepository = UserRepository()
+        userViewModel = ViewModelProvider(
+            this@RequestPermissionsFragment, UserViewModelFactory(userRepository)
+        )[UserViewModel::class.java]
+
+        userViewModel.getUser(auth.currentUser!!.uid)
 
         if (hasPermissions()) {
             onPermissionsGranted()
@@ -71,6 +86,10 @@ class RequestPermissionsFragment : Fragment() {
         findNavController().navigate(R.id.action_requestPermissionsFragment_to_onboardingUserInfoFragment)
     }
 
+    private fun navigateToHome() {
+        findNavController().navigate(R.id.nav_home)
+    }
+
     private fun onPermissionsGranted() {
         // clear the listener
         requestPermissionsButton.setOnClickListener(null)
@@ -82,7 +101,12 @@ class RequestPermissionsFragment : Fragment() {
 
         // Wait some time to show user thank you message
         Handler(Looper.getMainLooper()).postDelayed(NAVIGATION_DELAY) {
-            navigateToNextOnboardingScreen()
+            if(userViewModel.user != null){
+                navigateToHome()
+            } else {
+                navigateToNextOnboardingScreen()
+            }
+
         }
     }
 

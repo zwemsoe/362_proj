@@ -20,13 +20,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.travelassistant.R
-import com.example.travelassistant.manager.DataStoreManager
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CoordinatesUtil.getAddressFromLocation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
-import kotlinx.coroutines.CoroutineScope
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,7 +36,6 @@ class HomeFragment : Fragment() {
     private lateinit var inflater: LayoutInflater
     private lateinit var suggestionsContainer: LinearLayout
     private lateinit var userLocationTextView: TextView
-    private lateinit var dataStoreManager: DataStoreManager
     private lateinit var userRepository: UserRepository
     private lateinit var userViewModel: UserViewModel
     private lateinit var questionEditText: EditText
@@ -47,6 +45,7 @@ class HomeFragment : Fragment() {
     private lateinit var answerOptionsContainer: ConstraintLayout
     private lateinit var copyAnswerButton: ImageButton
     private lateinit var showAnswerOnMapButton: ImageButton
+    private lateinit var auth: FirebaseAuth
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -56,6 +55,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        auth = FirebaseAuth.getInstance()
         this.inflater = inflater
         view = inflater.inflate(R.layout.fragment_home, container, false)
 
@@ -101,6 +101,8 @@ class HomeFragment : Fragment() {
         userViewModel = ViewModelProvider(
             this, UserViewModelFactory(userRepository)
         )[UserViewModel::class.java]
+
+        userViewModel.getUser(auth.currentUser!!.uid)
     }
 
     private fun initEditTextListener() {
@@ -183,14 +185,5 @@ class HomeFragment : Fragment() {
             }
         }
         homeViewModel.generateSuggestions()
-    }
-
-    private fun observeDataStoreChanges() {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStoreManager.userIdFlow.collect { userId ->
-                println("ACCESS USERID HERE: $userId")
-                userViewModel.getUser(userId)
-            }
-        }
     }
 }

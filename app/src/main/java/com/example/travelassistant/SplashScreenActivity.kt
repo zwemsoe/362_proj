@@ -13,24 +13,36 @@ import android.view.animation.AnticipateInterpolator
 import androidx.core.animation.doOnEnd
 import com.example.travelassistant.utils.ANIMATION_DURATION
 import com.example.travelassistant.utils.slideUpAnimation
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 private const val SPLASH_DURATION = 3000L
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
         setupSplashExitAnimation()
 
+        auth = Firebase.auth
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, MainActivity::class.java)
+            val currentUser = auth.currentUser
+            var intent: Intent = if(currentUser != null){
+                Intent(this, MainActivity::class.java)
+            }else {
+                Intent(this, SignInActivity::class.java)
+            }
             startActivity(intent)
             finish()
         }, SPLASH_DURATION)
     }
+
+
 
     private fun setupCustomSplashEnterAnimation() {
         val rootView = findViewById<View>(android.R.id.content)
