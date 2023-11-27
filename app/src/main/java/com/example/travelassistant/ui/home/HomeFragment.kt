@@ -14,6 +14,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -75,6 +76,11 @@ class HomeFragment : Fragment() {
             clipboardManager.setPrimaryClip(clip)
             Toast.makeText(it.context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
 
     private fun initVars() {
