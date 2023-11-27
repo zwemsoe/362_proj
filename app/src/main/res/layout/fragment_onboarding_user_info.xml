@@ -78,6 +78,7 @@
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:text="Nice to Meet You!"
+        android:background="@drawable/rounded_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
