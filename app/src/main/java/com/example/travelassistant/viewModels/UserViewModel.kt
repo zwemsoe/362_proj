@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.travelassistant.models.user.TodoItem
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.openai.TravelAssistant
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
@@ -20,6 +21,9 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         viewModelScope.launch {
             userRepository.getById(userId).collect { userData ->
                 _user.postValue(userData)
+                if (userData != null) {
+                    TravelAssistant.setUser(userData)
+                }
             }
         }
     }
