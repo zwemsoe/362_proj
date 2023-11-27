@@ -1,10 +1,14 @@
 package com.example.travelassistant.ui.todo
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -12,7 +16,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelassistant.R
-import com.google.android.material.internal.ViewUtils.hideKeyboard
+import com.example.travelassistant.manager.DataStoreManager
+import com.example.travelassistant.models.user.TodoItem
+import com.example.travelassistant.models.user.User
+import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.viewModels.UserViewModel
+import com.example.travelassistant.viewModels.UserViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.UUID
+
 
 class TodoFragment : Fragment() {
     private lateinit var view: View
@@ -20,31 +34,45 @@ class TodoFragment : Fragment() {
     private lateinit var viewModel: TodoViewModel
 
     private lateinit var todoListView : RecyclerView
-    //temporary array store
-    private var tempItems : ArrayList<String> = arrayListOf()
-    private var tempItemsFinished : ArrayList<Boolean> = arrayListOf()
+    private var todoList : List<TodoItem> = listOf()
 
+    private lateinit var dataStoreManager: DataStoreManager
+    private lateinit var userRepository: UserRepository
+    private lateinit var userViewModel: UserViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        dataStoreManager = DataStoreManager(context)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         this.inflater = inflater
         view = inflater.inflate(R.layout.fragment_todo, container, false)
-        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
 
+        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
+        userRepository = UserRepository()
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository))[UserViewModel::class.java]
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupSuggestions()
-
         todoListView = view.findViewById(R.id.todo_created_container)
-        setupTodoList()
-        setupButtons()
+        observeDataStoreChanges()
+
+        userViewModel.user.observe(viewLifecycleOwner) { user ->
+            if (user == null) {
+                return@observe
+            }
+            setupSuggestions(user)
+            setupButtons(user)
+            getUserTodoList(user)
+        }
     }
 
-    private fun setupSuggestions() {
+    private fun setupSuggestions(user : User) {
         val container = view.findViewById<LinearLayout>(R.id.todo_suggestions_container)
         val loadingOrFail = TextView(requireContext())
         loadingOrFail.text = "Loading..."
@@ -59,39 +87,64 @@ class TodoFragment : Fragment() {
             suggestions.forEach { suggestion ->
                 val todoView = inflater.inflate(R.layout.todo_item, container, false)
                 todoView.findViewById<TextView>(R.id.textview_todo).text = suggestion
+
+                //Adds suggestion to user's to do list if checked
+                todoView.findViewById<CheckBox>(R.id.checkbox_todo).setOnCheckedChangeListener {_, isChecked : Boolean ->
+                    if (isChecked) {
+                        val itemID = UUID.randomUUID().toString()
+                        val item = TodoItem(itemID,"", false)
+
+                        item.task = suggestion
+                        userViewModel.addTodoItem(user.id,item)
+
+                        todoListView.adapter?.notifyDataSetChanged()
+
+                        Toast.makeText(requireContext(), "Added suggestion", Toast.LENGTH_SHORT).show()
+                    }
+                }
                 container.addView(todoView)
             }
         }
         viewModel.generateSuggestions()
     }
 
+    //Add todoItem
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
-    private fun setupButtons() {
+    private fun setupButtons(user : User) {
         val addButton : TextView = view.findViewById(R.id.todo_add_button)
         addButton.setOnClickListener{
-            var addItem : TextView = view.findViewById<TextView?>(R.id.todo_add_text)
-            tempItems.add(addItem.text.toString())
-            tempItemsFinished.add(false)
+            val addItem : TextView = view.findViewById<TextView?>(R.id.todo_add_text)
+            val itemID = UUID.randomUUID().toString()
+            val item = TodoItem(itemID,"", false)
+
+            item.task = addItem.text.toString()
+            userViewModel.addTodoItem(user.id,item)
+
+            //Clear text field
             addItem.text = ""
             addItem.clearFocus()
             todoListView.adapter?.notifyDataSetChanged()
-            hideKeyboard(view)
+
+            //Close keyboard
+            val kb = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            kb.hideSoftInputFromWindow(view.windowToken, 0)
+
             Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
         }
-}
+    }
 
-//Temporary load filler text, change when database implemented
-    private fun setupTodoList() {
-        tempItems.add("one")
-        tempItems.add("two")
-        tempItems.add("three")
-        tempItems.add("four")
+    //Initiate todoList
+    private fun getUserTodoList(user : User) {
+        todoList = user.todoList
+        todoListView.adapter = TodoRecyclerAdapter(todoList, userViewModel, user.id)
+    }
 
-        tempItemsFinished.add(false)
-        tempItemsFinished.add(false)
-        tempItemsFinished.add(false)
-        tempItemsFinished.add(false)
-
-        todoListView.adapter = TodoRecyclerAdapter(tempItems,tempItemsFinished)
+    private fun observeDataStoreChanges() {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStoreManager.userIdFlow.collect { userId ->
+                println("ACCESS USERID HERE: $userId")
+                userViewModel.getUser(userId)
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.travelassistant.ui.todo
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +10,15 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelassistant.R
+import com.example.travelassistant.models.user.TodoItem
+import com.example.travelassistant.viewModels.UserViewModel
 
 
-class TodoRecyclerAdapter(items : ArrayList<String>, itemsFinish : ArrayList<Boolean>) : RecyclerView.Adapter<TodoRecyclerAdapter.ViewHolder>() {
+class TodoRecyclerAdapter(items : List<TodoItem>, userModel : UserViewModel, userId : String) : RecyclerView.Adapter<TodoRecyclerAdapter.ViewHolder>() {
     private var todoItemList = items
-    private var todoFinishList = itemsFinish
+    private var myModel = userModel
+    private var myUserId = userId
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val item : TextView = view.findViewById(R.id.textview_todo)
         var finished : CheckBox = view.findViewById(R.id.checkbox_todo)
@@ -26,24 +31,40 @@ class TodoRecyclerAdapter(items : ArrayList<String>, itemsFinish : ArrayList<Boo
     }
 
     //Adds strikethrough to text if checked
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.item.text = todoItemList[position]
-        println("debug: $position")
-        holder.finished.isChecked = todoFinishList[position]
+        holder.finished.isChecked = todoItemList[position].completed
+        holder.item.text = todoItemList[position].task
+
+        if (todoItemList[position].completed) {
+            holder.item.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            holder.delButton.visibility = View.VISIBLE
+        }
+        else {
+            holder.item.paintFlags = Paint.ANTI_ALIAS_FLAG
+            holder.delButton.visibility = View.INVISIBLE
+        }
+
+        //Delete todoItems
         holder.finished.setOnCheckedChangeListener { _, isChecked : Boolean ->
+
             if (isChecked) {
                 holder.item.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                myModel.checkTodoItem(myUserId,todoItemList[position].id)
                 holder.delButton.visibility = View.VISIBLE
             }
             else {
                 holder.item.paintFlags = Paint.ANTI_ALIAS_FLAG
+                myModel.unCheckTodoItem(myUserId,todoItemList[position].id)
                 holder.delButton.visibility = View.INVISIBLE
             }
         }
+
         holder.delButton.setOnClickListener {
-            todoItemList.removeAt(holder.adapterPosition)
-            todoFinishList.removeAt(holder.adapterPosition)
-            notifyDataSetChanged()
+            //todoFinishList.removeAt(holder.adapterPosition)
+            myModel.deleteTodoItem(myUserId,todoItemList[position].id)
+            //todoItemList.filterNot { it.id == todoItemList[position].id}
+            this.notifyDataSetChanged()
         }
     }
     override fun getItemCount(): Int {

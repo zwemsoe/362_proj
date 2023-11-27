@@ -65,11 +65,37 @@ class UserRepository {
         }.await()
     }
 
+    suspend fun checkTodoItem(userId: String, todoId: String) {
+        val doc = usersCollection.document(userId)
+        db.runTransaction { transaction ->
+            val user = transaction.get(doc).toObject(User::class.java)
+            val item = user?.todoList?.find { (it.id == todoId) }
+            if (item != null) {
+                item.completed = true
+            }
+            val updatedTodoList = user?.todoList ?: listOf()
+            transaction.update(doc, "todoList", updatedTodoList)
+        }.await()
+    }
+
+    suspend fun unCheckTodoItem(userId: String, todoId: String) {
+        val doc = usersCollection.document(userId)
+        db.runTransaction { transaction ->
+            val user = transaction.get(doc).toObject(User::class.java)
+            val item= user?.todoList?.find { (it.id == todoId) }
+            if (item != null) {
+                item.completed = false
+            }
+            val updatedTodoList = user?.todoList ?: listOf()
+            transaction.update(doc, "todoList", updatedTodoList)
+        }.await()
+    }
+
     suspend fun deleteTodoItem(userId: String, todoId: String) {
         val doc = usersCollection.document(userId)
         db.runTransaction { transaction ->
             val user = transaction.get(doc).toObject(User::class.java)
-            val updatedTodoList = user?.todoList?.filterNot { it.task == todoId } ?: listOf()
+            val updatedTodoList = user?.todoList?.filterNot { it.id == todoId } ?: listOf()
             transaction.update(doc, "todoList", updatedTodoList)
         }.await()
     }
