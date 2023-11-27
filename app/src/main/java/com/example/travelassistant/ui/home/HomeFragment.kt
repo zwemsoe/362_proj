@@ -12,7 +12,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -47,11 +46,6 @@ class HomeFragment : Fragment() {
     private lateinit var showAnswerOnMapButton: ImageButton
     private lateinit var auth: FirebaseAuth
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        dataStoreManager = DataStoreManager(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -69,7 +63,6 @@ class HomeFragment : Fragment() {
         listenCurrentUserChanges()
         listenQuestionAnswer()
         setupSuggestions()
-        observeDataStoreChanges()
 
         copyAnswerButton.setOnClickListener {
             val clipboardManager =

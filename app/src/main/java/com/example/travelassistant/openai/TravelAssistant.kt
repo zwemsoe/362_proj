@@ -2,6 +2,8 @@ package com.example.travelassistant.openai
 
 import com.aallam.openai.api.chat.ChatCompletionChunk
 import com.aallam.openai.api.chat.ChatCompletionRequest
+import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.exception.OpenAIAPIException
 import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.model.ModelId
