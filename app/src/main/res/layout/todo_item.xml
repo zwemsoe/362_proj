@@ -21,6 +21,7 @@
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/delete_button"
+            android:background="@drawable/rounded_button"
             android:layout_width="38dp"
             android:layout_height="40dp"
             android:text="X"
