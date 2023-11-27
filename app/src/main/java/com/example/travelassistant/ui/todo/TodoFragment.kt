@@ -38,6 +38,7 @@ class TodoFragment : Fragment() {
     private lateinit var dataStoreManager: DataStoreManager
     private lateinit var userRepository: UserRepository
     private lateinit var userViewModel: UserViewModel
+    private lateinit var myUserId : String
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -60,18 +61,19 @@ class TodoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         todoListView = view.findViewById(R.id.todo_created_container)
         observeDataStoreChanges()
+        setupSuggestions()
 
         userViewModel.user.observe(viewLifecycleOwner) { user ->
             if (user == null) {
                 return@observe
             }
+            myUserId = user.id
             setupButtons(user)
-            setupSuggestions(user)
             getUserTodoList(user)
         }
     }
 
-    private fun setupSuggestions(user : User) {
+    private fun setupSuggestions() {
         val container = view.findViewById<LinearLayout>(R.id.todo_suggestions_container)
         val loadingOrFail = TextView(requireContext())
         loadingOrFail.text = "Loading..."
@@ -93,7 +95,7 @@ class TodoFragment : Fragment() {
                     val item = TodoItem(itemID,"", false)
 
                     item.task = suggestion
-                    userViewModel.addTodoItem(user.id,item)
+                    userViewModel.addTodoItem(myUserId,item)
                     todoListView.adapter?.notifyItemInserted(todoList.size)
 
                     Toast.makeText(requireContext(), "Added suggestion!", Toast.LENGTH_SHORT).show()
