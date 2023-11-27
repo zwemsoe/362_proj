@@ -66,7 +66,7 @@ class ReputationsFragment : Fragment() {
         recyclerView = view.findViewById(R.id.leaderboardList)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        if(userViewModel.user == null){
+        if(userViewModel._user.value == null){
             userViewModel.getUser(auth.currentUser!!.uid)
         }
 
