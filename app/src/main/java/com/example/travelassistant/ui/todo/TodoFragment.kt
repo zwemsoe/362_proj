@@ -33,6 +33,7 @@ class TodoFragment : Fragment() {
     private lateinit var viewModel: TodoViewModel
 
     private lateinit var todoListView : RecyclerView
+    private lateinit var todoListAdapter : TodoRecyclerAdapter
     private var todoList : List<TodoItem> = listOf()
 
     private lateinit var dataStoreManager: DataStoreManager
@@ -134,7 +135,10 @@ class TodoFragment : Fragment() {
     //Initiate todoList
     private fun getUserTodoList(user : User) {
         todoList = user.todoList
-        todoListView.adapter = TodoRecyclerAdapter(todoList, userViewModel, user.id)
+        todoListAdapter = TodoRecyclerAdapter(userViewModel, user.id)
+        todoListAdapter.setTodoList(todoList)
+        todoListView.adapter = todoListAdapter
+        todoListAdapter.notifyDataSetChanged()
     }
 
     private fun observeDataStoreChanges() {
