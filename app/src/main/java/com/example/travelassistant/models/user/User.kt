@@ -5,7 +5,7 @@ import com.google.firebase.firestore.GeoPoint
 
 data class TodoItem(
     val id: String, val task: String, val completed: Boolean
-){
+) {
     constructor() : this(
         id = "",
         task = "",
@@ -17,7 +17,7 @@ data class User(
     val id: String,
     val displayName: String,
     val email: String,
-    val imageUrl: Uri,
+    val imageUrl: String?,
     val currentLocation: GeoPoint?,
     val createdAt: Long = System.currentTimeMillis(),
     val keepLocationPrivate: Boolean = false,
@@ -29,7 +29,7 @@ data class User(
         id = "",
         displayName = "",
         email = "",
-        imageUrl= Uri.EMPTY,
+        imageUrl = "",
         currentLocation = null,
     )
 }
