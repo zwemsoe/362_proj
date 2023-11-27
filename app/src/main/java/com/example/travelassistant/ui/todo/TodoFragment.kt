@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -66,8 +65,8 @@ class TodoFragment : Fragment() {
             if (user == null) {
                 return@observe
             }
-            setupSuggestions(user)
             setupButtons(user)
+            setupSuggestions(user)
             getUserTodoList(user)
         }
     }
@@ -85,22 +84,19 @@ class TodoFragment : Fragment() {
             }
             container.removeAllViews()
             suggestions.forEach { suggestion ->
-                val todoView = inflater.inflate(R.layout.todo_item, container, false)
+                val todoView = inflater.inflate(R.layout.suggestion_item, container, false)
                 todoView.findViewById<TextView>(R.id.textview_todo).text = suggestion
 
                 //Adds suggestion to user's to do list if checked
-                todoView.findViewById<CheckBox>(R.id.checkbox_todo).setOnCheckedChangeListener {_, isChecked : Boolean ->
-                    if (isChecked) {
-                        val itemID = UUID.randomUUID().toString()
-                        val item = TodoItem(itemID,"", false)
+                todoView.findViewById<TextView>(R.id.suggestion_add_button).setOnClickListener() {
+                    val itemID = UUID.randomUUID().toString()
+                    val item = TodoItem(itemID,"", false)
 
-                        item.task = suggestion
-                        userViewModel.addTodoItem(user.id,item)
+                    item.task = suggestion
+                    userViewModel.addTodoItem(user.id,item)
+                    todoListView.adapter?.notifyItemInserted(todoList.size)
 
-                        todoListView.adapter?.notifyDataSetChanged()
-
-                        Toast.makeText(requireContext(), "Added suggestion", Toast.LENGTH_SHORT).show()
-                    }
+                    Toast.makeText(requireContext(), "Added suggestion", Toast.LENGTH_SHORT).show()
                 }
                 container.addView(todoView)
             }
@@ -123,7 +119,7 @@ class TodoFragment : Fragment() {
             //Clear text field
             addItem.text = ""
             addItem.clearFocus()
-            todoListView.adapter?.notifyDataSetChanged()
+            todoListView.adapter?.notifyItemInserted(todoList.size)
 
             //Close keyboard
             val kb = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager

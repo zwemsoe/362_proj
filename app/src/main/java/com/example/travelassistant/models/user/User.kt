@@ -4,7 +4,7 @@ import android.net.Uri
 import com.google.firebase.firestore.GeoPoint
 
 data class TodoItem(
-    val id: String, val task: String, val completed: Boolean
+    val id: String, var task: String, var completed: Boolean
 ){
     constructor() : this(
         id = "",

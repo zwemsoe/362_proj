@@ -64,7 +64,7 @@ class TodoRecyclerAdapter(items : List<TodoItem>, userModel : UserViewModel, use
             //todoFinishList.removeAt(holder.adapterPosition)
             myModel.deleteTodoItem(myUserId,todoItemList[position].id)
             //todoItemList.filterNot { it.id == todoItemList[position].id}
-            this.notifyDataSetChanged()
+            notifyItemRemoved(holder.adapterPosition)
         }
     }
     override fun getItemCount(): Int {
