@@ -101,7 +101,7 @@ class RequestPermissionsFragment : Fragment() {
 
         // Wait some time to show user thank you message
         Handler(Looper.getMainLooper()).postDelayed(NAVIGATION_DELAY) {
-            if(userViewModel.user != null){
+            if (userViewModel.user.value != null) {
                 navigateToHome()
             } else {
                 navigateToNextOnboardingScreen()
