@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
-    private val _user = MutableLiveData<User>()
+    val _user = MutableLiveData<User>()
     val user: LiveData<User> = _user
 
 

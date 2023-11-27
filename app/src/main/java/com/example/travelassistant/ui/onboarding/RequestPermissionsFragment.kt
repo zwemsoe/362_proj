@@ -5,27 +5,22 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.os.postDelayed
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.PermissionUtil
-import com.example.travelassistant.utils.slideUpAnimation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.delay
-import java.util.Timer
-import kotlin.concurrent.schedule
 
 private const val NAVIGATION_DELAY = 3000L
 
@@ -130,6 +125,10 @@ class RequestPermissionsFragment : Fragment() {
         if (!hasPermissions()) {
             requestPermissions()
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity?)!!.supportActionBar?.hide()
     }
 
 //    override fun onDestroyView() {
