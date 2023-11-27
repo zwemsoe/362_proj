@@ -9,14 +9,18 @@ import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.exception.OpenAIAPIException
 import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.client.Chat
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
 import com.aallam.openai.client.RetryStrategy
 import com.example.travelassistant.BuildConfig
+import com.example.travelassistant.openai.TravelAssistantChat.getChatMessageList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onCompletion
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -46,10 +50,12 @@ object TravelAssistant {
         println(e.printStackTrace())
     }
 
-    private fun getChatCompletions(chatCompletionRequest: ChatCompletionRequest):
-            Flow<ChatCompletionChunk> {
+    private fun getChatCompletions(chatCompletionRequest: ChatCompletionRequest): Flow<ChatCompletionChunk> {
         return try {
-            openAI.chatCompletions(chatCompletionRequest)
+            openAI.chatCompletions(chatCompletionRequest).catch {
+                println("OpenAI.chatCompletions cannot be completed")
+                it.printStackTrace()
+            }
         } catch (e: OpenAIAPIException) {
             printError(e)
             emptyFlow()
@@ -62,5 +68,12 @@ object TravelAssistant {
 
     fun askQuestionSuggestions(): Flow<ChatCompletionChunk> {
         return questionSuggestionChunks
+    }
+
+    fun ask(question: String): Flow<ChatCompletionChunk> {
+        val chatMessage = ChatMessage(role = ChatRole.User, content = question)
+        val request =
+            ChatCompletionRequest(model = modelId, messages = getChatMessageList(chatMessage))
+        return getChatCompletions(request)
     }
 }

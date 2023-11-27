@@ -9,9 +9,6 @@ object TravelAssistantChat {
     private val chatMessageInitial = ChatMessage(
         role = ChatRole.Assistant, content = TravelAssistantConstants.INSTRUCTIONS
     )
-    private var chatMessageInitialList = listOf(chatMessageInitial)
-    private val _chatMessages = MutableLiveData(chatMessageInitialList)
-    val chatMessages: LiveData<List<ChatMessage>> get() = _chatMessages
 
     val todoSuggestionsInitial = listOf(
         ChatMessage(
@@ -26,8 +23,10 @@ object TravelAssistantChat {
         )
     )
 
-    fun addChatMessage(chatMessage: ChatMessage) {
-        chatMessageInitialList = listOf(chatMessageInitial, chatMessage)
-        _chatMessages.value = chatMessageInitialList
+    fun getChatMessageList(chatMessage: ChatMessage?): List<ChatMessage> {
+        if (chatMessage == null) {
+            return listOf(chatMessageInitial)
+        }
+        return listOf(chatMessageInitial, chatMessage)
     }
 }

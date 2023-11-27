@@ -12,7 +12,6 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.travelassistant.R
@@ -29,7 +28,7 @@ import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
     private lateinit var view: View
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var homeViewModel: HomeViewModel
     private lateinit var inflater: LayoutInflater
     private lateinit var suggestionsContainer: LinearLayout
     private lateinit var userLocationTextView: TextView
@@ -37,8 +36,9 @@ class HomeFragment : Fragment() {
     private lateinit var userRepository: UserRepository
     private lateinit var userViewModel: UserViewModel
     private lateinit var questionEditText: EditText
-    private lateinit var answerContainer: ScrollView
+    private lateinit var answerContainer: LinearLayout
     private lateinit var suggestionsOuterContainer: LinearLayout
+    private lateinit var questionAnswerTextView: TextView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,6 +59,7 @@ class HomeFragment : Fragment() {
         initVars()
         initEditTextListener()
         listenCurrentUserChanges()
+        listenQuestionAnswer()
         setupSuggestions()
         observeDataStoreChanges()
     }
@@ -69,8 +70,9 @@ class HomeFragment : Fragment() {
         questionEditText = view.findViewById(R.id.home_question_input)
         answerContainer = view.findViewById(R.id.answer_scroll_view)
         suggestionsOuterContainer = view.findViewById(R.id.home_suggestions)
+        questionAnswerTextView = view.findViewById(R.id.answer_text_view)
 
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
             this, UserViewModelFactory(userRepository)
@@ -82,8 +84,13 @@ class HomeFragment : Fragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = v.text
                 println("IME_ACTION_DONE: $text")
+                if (text.isEmpty()) {
+                    true
+                }
                 hideSuggestionsOnQuestionSubmit()
                 displayAnswerContainer()
+                questionAnswerTextView.text = ""
+                homeViewModel.submitQuestion(text.toString())
                 true
             }
             false
@@ -99,6 +106,12 @@ class HomeFragment : Fragment() {
         val displayMetrics = Resources.getSystem().displayMetrics
         val screenHeight = displayMetrics.heightPixels
         answerContainer.layoutParams.height = screenHeight / 2
+    }
+
+    private fun listenQuestionAnswer() {
+        homeViewModel.questionAnswer.observe(viewLifecycleOwner) {
+            questionAnswerTextView.text = it
+        }
     }
 
     private fun listenCurrentUserChanges() {
@@ -126,7 +139,7 @@ class HomeFragment : Fragment() {
         loadingOrFail.text = "Loading..."
         suggestionsContainer.addView(loadingOrFail)
 
-        viewModel.suggestedQuestionList.observe(viewLifecycleOwner) { suggestions ->
+        homeViewModel.suggestedQuestionList.observe(viewLifecycleOwner) { suggestions ->
             if (suggestions.isEmpty()) {
                 loadingOrFail.text = "Sorry, cannot give any suggestions at the moment"
                 return@observe
@@ -143,7 +156,7 @@ class HomeFragment : Fragment() {
                 suggestionsContainer.addView(suggestionView)
             }
         }
-        viewModel.generateSuggestions()
+        homeViewModel.generateSuggestions()
     }
 
     private fun observeDataStoreChanges() {

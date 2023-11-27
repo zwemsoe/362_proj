@@ -13,6 +13,8 @@ class HomeViewModel : ViewModel() {
     private val maxSuggestionCount = 3
     private val _suggestedQuestionList = MutableLiveData<List<String>>()
     val suggestedQuestionList: LiveData<List<String>> = _suggestedQuestionList
+    private val _questionAnswer = MutableLiveData("")
+    val questionAnswer get() = _questionAnswer
 
     fun generateSuggestions() {
         var responseText = ""
@@ -40,5 +42,19 @@ class HomeViewModel : ViewModel() {
     private fun extractQuestionList(response: String): List<String> {
         val todoPattern = Regex("^\\d+\\.\\s+(.+)$", RegexOption.MULTILINE)
         return todoPattern.findAll(response).map { it.groupValues[1] }.toList()
+    }
+
+    fun submitQuestion(question: String) {
+        _questionAnswer.value = ""
+        viewModelScope.launch {
+            TravelAssistant.ask(question).collect {
+                it.choices.forEach { chatChoice ->
+                    if (chatChoice.delta.content == null) {
+                        return@collect
+                    }
+                    _questionAnswer.value += chatChoice.delta.content
+                }
+            }
+        }
     }
 }
