@@ -96,7 +96,7 @@ class TodoFragment : Fragment() {
                     userViewModel.addTodoItem(user.id,item)
                     todoListView.adapter?.notifyItemInserted(todoList.size)
 
-                    Toast.makeText(requireContext(), "Added suggestion", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Added suggestion!", Toast.LENGTH_SHORT).show()
                 }
                 container.addView(todoView)
             }
