@@ -40,7 +40,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:text="June 2023"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:textColor="#5061FF"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
@@ -57,8 +57,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:text="Simon Fraser University"
-        android:textSize="30sp"
+        android:text="Unknown"
+        android:textSize="20sp"
         android:textColor="#5061FF"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
@@ -75,8 +75,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:text="10"
-        android:textSize="30sp"
+        android:text="0"
+        android:textSize="20sp"
         android:textColor="#5061FF"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
