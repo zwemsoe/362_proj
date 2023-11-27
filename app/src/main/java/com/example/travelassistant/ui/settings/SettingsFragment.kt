@@ -1,6 +1,5 @@
 package com.example.travelassistant.ui.settings
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.travelassistant.BuildConfig
 import com.example.travelassistant.R
-import com.example.travelassistant.manager.DataStoreManager
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.viewModels.OnboardingViewModel
 import com.example.travelassistant.viewModels.UserViewModel
@@ -38,11 +36,8 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.UUID
 
 
 class SettingsFragment : Fragment(), OnMapReadyCallback {
@@ -57,21 +52,17 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var onboardingViewModel: OnboardingViewModel
     private lateinit var userViewModel: UserViewModel
     private lateinit var userRepository: UserRepository
-    private lateinit var dataStoreManager: DataStoreManager
     private lateinit var editLocationButton: ImageButton
     private lateinit var placesClient: PlacesClient
+    private lateinit var auth: FirebaseAuth
     private var marker: Marker? = null
     private var useLiveLocation = true
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        dataStoreManager = DataStoreManager(context)
-    }
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        auth = FirebaseAuth.getInstance()
         view = inflater.inflate(R.layout.fragment_settings, container, false)
         locationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         if (!Places.isInitialized()) {
@@ -87,16 +78,16 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         setupMap()
 
         saveSettingsButton.setOnClickListener {
-            val userId = UUID.randomUUID().toString()
+            val userId = auth.currentUser!!.uid
+            val email = auth.currentUser!!.email
             val displayName = onboardingViewModel.displayName.value
             val currentLocation =
                 onboardingViewModel.locationLatLng.value ?: return@setOnClickListener
 
             val location = GeoPoint(currentLocation.latitude, currentLocation.longitude)
             val keepLocationPrivate = keepPrivateCheckBox.isChecked
-            if (!displayName.isNullOrEmpty() && location != null) {
-                userViewModel.onboard(userId, displayName, location, keepLocationPrivate)
-                storeUserId(userId)
+            if (!displayName.isNullOrEmpty()) {
+                userViewModel.onboard(userId, displayName, email!!, location, keepLocationPrivate)
             }
             findNavController().navigate(R.id.action_nav_settings_to_nav_home)
         }
@@ -160,12 +151,6 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             this@SettingsFragment, UserViewModelFactory(userRepository)
         )[UserViewModel::class.java]
         placesClient = Places.createClient(requireContext())
-    }
-
-    private fun storeUserId(id: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStoreManager.storeUserId(id)
-        }
     }
 
     private fun onAutoCompleteItemClick(itemSelected: String) {

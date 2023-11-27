@@ -21,12 +21,14 @@ class UserRepository {
     suspend fun onboard(
         id: String,
         displayName: String,
+        email: String,
         currentLocation: GeoPoint,
         keepLocationPrivate: Boolean
     ) {
         val user = User(
             id = id,
             displayName = displayName,
+            email = email,
             currentLocation = currentLocation,
             keepLocationPrivate = keepLocationPrivate
         )

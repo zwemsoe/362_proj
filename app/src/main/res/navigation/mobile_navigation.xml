@@ -62,4 +62,6 @@
             android:id="@+id/action_onboardingUserInfoFragment_to_nav_settings"
             app:destination="@id/nav_settings" />
     </fragment>
+
+
 </navigation>

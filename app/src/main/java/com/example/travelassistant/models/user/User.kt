@@ -9,6 +9,7 @@ data class TodoItem(
 data class User(
     val id: String,
     val displayName: String,
+    val email: String,
     val currentLocation: GeoPoint?,
     val createdAt: Long = System.currentTimeMillis(),
     val keepLocationPrivate: Boolean = false,
@@ -19,6 +20,7 @@ data class User(
     constructor() : this(
         id = "",
         displayName = "",
+        email = "",
         currentLocation = null,
     )
 }
