@@ -1,7 +1,9 @@
 package com.example.travelassistant.models.user
 
+import android.net.Uri
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -17,11 +19,21 @@ class UserRepository {
         emit(user)
     }
 
+    fun getTopTenUsers(): Flow<List<User>?> = flow {
+        val snapshot = db.collection("users").orderBy("points", Query.Direction.DESCENDING)
+            .limit(10).get().await()
+        val users = snapshot.documents.mapNotNull { document ->
+            document.toObject(User::class.java)
+        }
+        emit(users)
+    }
+
     // Mutations
     suspend fun onboard(
         id: String,
         displayName: String,
         email: String,
+        imageUrl: Uri,
         currentLocation: GeoPoint,
         keepLocationPrivate: Boolean
     ) {
@@ -29,6 +41,7 @@ class UserRepository {
             id = id,
             displayName = displayName,
             email = email,
+            imageUrl = imageUrl,
             currentLocation = currentLocation,
             keepLocationPrivate = keepLocationPrivate
         )

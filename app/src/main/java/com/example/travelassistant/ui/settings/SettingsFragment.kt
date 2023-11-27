@@ -86,8 +86,8 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
 
             val location = GeoPoint(currentLocation.latitude, currentLocation.longitude)
             val keepLocationPrivate = keepPrivateCheckBox.isChecked
-            if (!displayName.isNullOrEmpty()) {
-                userViewModel.onboard(userId, displayName, email!!, location, keepLocationPrivate)
+            if (!displayName.isNullOrEmpty() && auth.currentUser!!.photoUrl != null) {
+                userViewModel.onboard(userId, displayName, email!!, auth.currentUser!!.photoUrl!!, location, keepLocationPrivate)
             }
             findNavController().navigate(R.id.action_nav_settings_to_nav_home)
         }

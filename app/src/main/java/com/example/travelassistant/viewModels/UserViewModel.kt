@@ -1,10 +1,12 @@
 package com.example.travelassistant.viewModels
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.aallam.openai.api.image.ImageURL
 import com.example.travelassistant.models.user.TodoItem
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
@@ -17,6 +19,7 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _user = MutableLiveData<User>()
     val user: LiveData<User> = _user
 
+
     fun getUser(userId: String) {
         viewModelScope.launch {
             userRepository.getById(userId).collect { userData ->
@@ -28,12 +31,13 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
+
     fun onboard(
-        id: String, displayName: String, email: String, currentLocation: GeoPoint, keepLocationPrivate: Boolean
+        id: String, displayName: String, email: String, imageURL: Uri, currentLocation: GeoPoint, keepLocationPrivate: Boolean
     ) {
         viewModelScope.launch {
             userRepository.onboard(
-                id, displayName, email, currentLocation, keepLocationPrivate = keepLocationPrivate
+                id, displayName, email, imageURL,currentLocation, keepLocationPrivate = keepLocationPrivate
             )
         }
     }
