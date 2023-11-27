@@ -1,5 +1,7 @@
 package com.example.travelassistant.ui.home
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
@@ -8,9 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -39,6 +44,9 @@ class HomeFragment : Fragment() {
     private lateinit var answerContainer: LinearLayout
     private lateinit var suggestionsOuterContainer: LinearLayout
     private lateinit var questionAnswerTextView: TextView
+    private lateinit var answerOptionsContainer: ConstraintLayout
+    private lateinit var copyAnswerButton: ImageButton
+    private lateinit var showAnswerOnMapButton: ImageButton
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -62,6 +70,18 @@ class HomeFragment : Fragment() {
         listenQuestionAnswer()
         setupSuggestions()
         observeDataStoreChanges()
+
+        copyAnswerButton.setOnClickListener {
+            val clipboardManager =
+                it.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val text = questionAnswerTextView.text.toString()
+            if (text.isEmpty()) {
+                return@setOnClickListener
+            }
+            val clip = ClipData.newPlainText("Travel Assistant", text)
+            clipboardManager.setPrimaryClip(clip)
+            Toast.makeText(it.context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initVars() {
@@ -71,6 +91,10 @@ class HomeFragment : Fragment() {
         answerContainer = view.findViewById(R.id.answer_scroll_view)
         suggestionsOuterContainer = view.findViewById(R.id.home_suggestions)
         questionAnswerTextView = view.findViewById(R.id.answer_text_view)
+        answerOptionsContainer = view.findViewById(R.id.answer_options_container)
+        copyAnswerButton = view.findViewById(R.id.copy_answer_button)
+        showAnswerOnMapButton = view.findViewById(R.id.answer_map_button)
+        showAnswerOnMapButton.isEnabled = false // TODO
 
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         userRepository = UserRepository()
@@ -83,7 +107,6 @@ class HomeFragment : Fragment() {
         questionEditText.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = v.text
-                println("IME_ACTION_DONE: $text")
                 if (text.isEmpty()) {
                     true
                 }
@@ -103,9 +126,12 @@ class HomeFragment : Fragment() {
 
     private fun displayAnswerContainer() {
         answerContainer.visibility = View.VISIBLE
+        answerOptionsContainer.visibility = View.VISIBLE
+
         val displayMetrics = Resources.getSystem().displayMetrics
         val screenHeight = displayMetrics.heightPixels
         answerContainer.layoutParams.height = screenHeight / 2
+
     }
 
     private fun listenQuestionAnswer() {

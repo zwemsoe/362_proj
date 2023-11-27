@@ -5,12 +5,10 @@ package com.example.travelassistant.openai
  * So, we moved the INSTRUCTIONS const to this file that doesn't get changed much
  */
 object TravelAssistantConstants {
-    private const val USER_LOCATION = "User location is 4123 W 10th Ave, Vancouver, BC V6R 2H2. "
     private const val MAX_SUGGESTION_RULE = "Provide only 3 suggestions."
     const val INSTRUCTIONS =
         "You are a travel assistant. " +
         "You will help users with any questions they may have about their nearby location. " +
-        "$USER_LOCATION" +
         "Give them suggestions, help with their TODO list and events when asked. " +
         "Don't ask user to give more information, give response a given the prompt to the best of " +
         "your ability instead. " + "Keep your responses short and concise. "
