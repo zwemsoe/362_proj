@@ -111,14 +111,18 @@ class HomeFragment : Fragment() {
                 if (text.isEmpty()) {
                     true
                 }
-                hideSuggestionsOnQuestionSubmit()
-                displayAnswerContainer()
-                questionAnswerTextView.text = ""
-                homeViewModel.submitQuestion(text.toString())
+                onSubmitQuestion(text.toString())
                 true
             }
             false
         }
+    }
+
+    private fun onSubmitQuestion(question: String) {
+        hideSuggestionsOnQuestionSubmit()
+        displayAnswerContainer()
+        questionAnswerTextView.text = ""
+        homeViewModel.submitQuestion(question)
     }
 
     private fun hideSuggestionsOnQuestionSubmit() {
@@ -173,16 +177,26 @@ class HomeFragment : Fragment() {
             }
             suggestionsContainer.removeAllViews()
             suggestions.forEach { suggestion ->
-                val suggestionView = inflater.inflate(
-                    R.layout.question_suggestion_bubble, suggestionsContainer, false
-                )
-                val suggestionTextView = suggestionView.findViewById<TextView>(
-                    R.id.textview_question_suggestion
-                )
-                suggestionTextView.text = "\"$suggestion\""
+                val suggestionView = createSuggestion(suggestion)
                 suggestionsContainer.addView(suggestionView)
             }
         }
         homeViewModel.generateSuggestions()
+    }
+
+    private fun createSuggestion(text: String): View {
+        val suggestionView = inflater.inflate(
+            R.layout.question_suggestion_bubble, suggestionsContainer, false
+        )
+        val suggestionTextView =
+            suggestionView.findViewById<TextView>(R.id.textview_question_suggestion)
+        suggestionTextView.text = "\"$text\""
+        val suggestionClickable =
+            suggestionView.findViewById<ConstraintLayout>(R.id.suggestion_clickable)
+        suggestionClickable.setOnClickListener {
+            questionEditText.setText(text)
+            onSubmitQuestion(text)
+        }
+        return suggestionView
     }
 }
