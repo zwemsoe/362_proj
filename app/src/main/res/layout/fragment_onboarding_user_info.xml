@@ -6,37 +6,38 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="30dp"
     android:paddingVertical="60dp"
+    android:theme="@style/DayNightLayout"
     tools:context=".ui.onboarding.OnboardingUserInfoFragment">
 
     <TextView
         android:id="@+id/textView2"
+        style="@style/GlobalTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Let's"
         android:textSize="72sp"
         app:layout_constraintTop_toTopOf="parent"
-        style="@style/GlobalTextStyle"
         tools:layout_editor_absoluteX="30dp" />
 
     <TextView
         android:id="@+id/textView3"
+        style="@style/GlobalTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Get to know"
         android:textSize="42sp"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        style="@style/GlobalTextStyle"
         tools:layout_editor_absoluteX="30dp" />
 
     <TextView
         android:id="@+id/onboarding1_title_end"
+        style="@style/GlobalTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Each other!"
         android:textSize="42sp"
-        style="@style/GlobalTextStyle"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <LinearLayout
@@ -47,20 +48,20 @@
         app:layout_constraintTop_toBottomOf="@+id/onboarding1_title_end">
 
         <TextView
+            style="@style/GlobalTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
             android:text="You are"
-            android:textSize="28sp"
-            style="@style/GlobalTextStyle"/>
+            android:textSize="28sp" />
 
 
         <EditText
             android:id="@+id/name_input"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="Your name"
-            android:background="@drawable/edit_text_area" />
+            android:background="@drawable/edit_text_area"
+            android:hint="Your name" />
 
 
     </LinearLayout>
@@ -69,8 +70,8 @@
         android:id="@+id/onboarding_user_info_confirm_button"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:text="Nice to Meet You!"
         android:background="@drawable/rounded_button"
+        android:text="Nice to Meet You!"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
