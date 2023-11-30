@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         userViewModel.getUser(auth.currentUser!!.uid)
 
         userViewModel.user.observe(this) {
-            if (it != null){
+            if (it != null) {
                 nameTextView.text = it.displayName
                 emailTextView.text = it.email
                 Glide.with(this)

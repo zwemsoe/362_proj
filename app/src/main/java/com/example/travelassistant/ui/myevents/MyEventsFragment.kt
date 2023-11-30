@@ -21,6 +21,7 @@ class MyEventsFragment : Fragment() {
         val myEventsViewModel = ViewModelProvider(this)[MyEventsViewModel::class.java]
         return view
     }
+
     override fun onResume() {
         super.onResume()
         // Show the ActionBar when the Fragment is resumed

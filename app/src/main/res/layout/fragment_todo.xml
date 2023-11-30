@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="30dp"
     android:paddingVertical="20dp"
+    android:theme="@style/DayNightLayout"
     tools:context=".ui.todo.TodoFragment">
 
     <LinearLayout
@@ -35,29 +36,33 @@
             android:layout_marginVertical="15dp"
             android:text="My To Do List"
             android:textFontWeight="700"
-            tools:targetApi="p"
-            tools:ignore="MissingConstraints" />
+            tools:ignore="MissingConstraints"
+            tools:targetApi="p" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/todo_add_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="13dp"
-                android:textSize="35sp"
-                android:text="+"/>
+                android:text="+"
+                android:textSize="35sp" />
+
             <EditText
                 android:id="@+id/todo_add_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Add a new todo item here"
-                android:textSize="14sp"
                 android:layout_marginLeft="17dp"
                 android:layout_marginTop="-5dp"
                 android:background="@null"
+                android:hint="Add a new todo item here"
+                android:textSize="14sp"
                 tools:ignore="MissingConstraints" />
         </LinearLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -73,8 +78,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_default="wrap"
                 app:layout_constraintHeight_max="400dp"
-                tools:listitem="@layout/todo_item"
-                tools:ignore="NotSibling" />
+                tools:ignore="NotSibling"
+                tools:listitem="@layout/todo_item" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </ScrollView>

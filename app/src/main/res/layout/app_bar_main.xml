@@ -9,15 +9,15 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:outlineProvider="none"
-        android:theme="@style/Theme.TravelAssistant.AppBarOverlay">
+        android:outlineProvider="none">
 
+        <!-- TODO: Find a better way to remove titles instead of titleTextColor = transparent -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/ActionBarStyle"
-            app:popupTheme="@style/Theme.TravelAssistant.PopupOverlay" />
+            app:titleTextColor="@android:color/transparent" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

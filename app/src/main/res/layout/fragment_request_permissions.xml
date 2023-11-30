@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="30dp"
     android:paddingVertical="60dp"
+    android:theme="@style/DayNightLayout"
     tools:context=".ui.onboarding.RequestPermissionsFragment">
 
     <LinearLayout
@@ -84,8 +85,8 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:height="50dp"
-        android:maxWidth="300dp"
         android:background="@drawable/rounded_button"
+        android:maxWidth="300dp"
         android:text="Request Permissions"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

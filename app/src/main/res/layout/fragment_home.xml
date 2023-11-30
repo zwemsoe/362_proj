@@ -82,7 +82,7 @@
         android:id="@+id/answer_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="#5061FF"
+        android:background="?colorPrimary"
         android:padding="20dp"
         android:visibility="gone"
 

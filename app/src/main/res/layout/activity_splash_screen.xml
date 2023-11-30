@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="30dp"
     android:paddingTop="90dp"
+    android:theme="@style/DayNightLayout"
     tools:context=".SplashScreenActivity">
 
     <TextView
@@ -14,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Hello,"
+        android:textColor="?colorPrimary"
         android:textSize="60sp"
-        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,8 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:text="Welcome to your,"
+        android:textColor="?colorPrimary"
         android:textSize="40sp"
-        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/splash_hello" />
@@ -37,8 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Travel Assistant"
+        android:textColor="?colorPrimary"
         android:textSize="40sp"
-        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/splash_welcome" />
