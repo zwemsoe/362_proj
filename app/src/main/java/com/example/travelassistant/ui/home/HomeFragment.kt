@@ -219,6 +219,11 @@ class HomeFragment : Fragment() {
                 suggestionsContainer.addView(suggestionView)
             }
         }
+        generateSuggestions()
+    }
+
+    private fun generateSuggestions() {
+        userViewModel.decreasePromptCount(auth.currentUser!!.uid)
         homeViewModel.generateSuggestions()
     }
 
