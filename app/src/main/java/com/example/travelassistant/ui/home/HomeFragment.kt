@@ -139,22 +139,21 @@ class HomeFragment : Fragment() {
         questionEditText.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = v.text
-                if (text.isNotEmpty() && userPromptCount != 0) {
-                    onSubmitQuestion(text.toString())
-                } else {
-                    onDeclineQuestion()
-                }
+                handleSubmitQuestion(text.toString())
                 true
             }
             false
         }
     }
 
-    private fun onDeclineQuestion() {
-        view.findViewById<ConstraintLayout>(R.id.question_limit_container).shakeAnimation()
-    }
-
-    private fun onSubmitQuestion(question: String) {
+    private fun handleSubmitQuestion(question: String) {
+        if (question.isEmpty()) {
+            return
+        }
+        if (userPromptCount == 0) {
+            view.findViewById<ConstraintLayout>(R.id.question_limit_container).shakeAnimation()
+            return
+        }
         userViewModel.decreasePromptCount(auth.currentUser!!.uid)
         hideSuggestionsOnQuestionSubmit()
         displayAnswerContainer()
@@ -226,7 +225,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun generateSuggestions() {
-        userViewModel.decreasePromptCount(auth.currentUser!!.uid)
+//        userViewModel.decreasePromptCount(auth.currentUser!!.uid)
         homeViewModel.generateSuggestions()
     }
 
@@ -241,7 +240,7 @@ class HomeFragment : Fragment() {
             suggestionView.findViewById<ConstraintLayout>(R.id.suggestion_clickable)
         suggestionClickable.setOnClickListener {
             questionEditText.setText(text)
-            onSubmitQuestion(text)
+            handleSubmitQuestion(text)
         }
         return suggestionView
     }
