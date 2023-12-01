@@ -26,6 +26,7 @@ import com.example.travelassistant.R
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CoordinatesUtil.getAddressFromLocation
+import com.example.travelassistant.utils.shakeAnimation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -120,14 +121,10 @@ class HomeFragment : Fragment() {
     private fun setMaxQuestionLength(maxCharLimit: Int) {
         val charCountTextView = view.findViewById<TextView>(R.id.char_count_text)
         charCountTextView.text = "0/$maxCharLimit"
-        charCountTextView.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                TODO("Not yet implemented")
-            }
+        questionEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                TODO("Not yet implemented")
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
                 val curr = s?.length ?: 0
@@ -144,11 +141,17 @@ class HomeFragment : Fragment() {
                 val text = v.text
                 if (text.isNotEmpty() && userPromptCount != 0) {
                     onSubmitQuestion(text.toString())
+                } else {
+                    onDeclineQuestion()
                 }
                 true
             }
             false
         }
+    }
+
+    private fun onDeclineQuestion() {
+        view.findViewById<ConstraintLayout>(R.id.question_limit_container).shakeAnimation()
     }
 
     private fun onSubmitQuestion(question: String) {
