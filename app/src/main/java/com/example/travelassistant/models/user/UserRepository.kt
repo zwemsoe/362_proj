@@ -46,7 +46,6 @@ class UserRepository {
             imageUrl = imageUrl.toString(),
             currentLocation = currentLocation,
             keepLocationPrivate = keepLocationPrivate,
-            isPremiumUser = false,
             promptCount = PROMPT_LIMIT
         )
         usersCollection.document(user.id).set(user).await()

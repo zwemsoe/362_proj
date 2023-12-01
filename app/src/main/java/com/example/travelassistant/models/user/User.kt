@@ -23,7 +23,6 @@ data class User(
     val keepLocationPrivate: Boolean = false,
     val points: Int = 0,
     val todoList: List<TodoItem> = listOf(),
-    val isPremiumUser: Boolean,
     val promptCount: Int
 ) {
     // https://medium.com/@eugenebrusov/firebase-needs-an-empty-constructor-to-be-able-to-deserialize-the-objects-2ddbd2c03620
@@ -33,7 +32,6 @@ data class User(
         email = "",
         imageUrl = "",
         currentLocation = null,
-        isPremiumUser = false,
         promptCount = 0
     )
 }
