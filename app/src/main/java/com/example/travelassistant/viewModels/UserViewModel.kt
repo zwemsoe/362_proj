@@ -33,11 +33,21 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
 
     fun onboard(
-        id: String, displayName: String, email: String, imageURL: Uri, currentLocation: GeoPoint, keepLocationPrivate: Boolean
+        id: String,
+        displayName: String,
+        email: String,
+        imageURL: Uri,
+        currentLocation: GeoPoint,
+        keepLocationPrivate: Boolean
     ) {
         viewModelScope.launch {
             userRepository.onboard(
-                id, displayName, email, imageURL,currentLocation, keepLocationPrivate = keepLocationPrivate
+                id,
+                displayName,
+                email,
+                imageURL,
+                currentLocation,
+                keepLocationPrivate = keepLocationPrivate
             )
         }
     }
@@ -70,6 +80,16 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
                 _user.value =
                     _user.value?.copy(todoList = it.filterNot { item -> item.task == todoId })
             }
+        }
+    }
+
+    fun decreasePromptCount(id: String) {
+        viewModelScope.launch {
+            var curr = _user.value?.promptCount ?: 0
+            curr = if (curr == 0) 0 else curr - 1
+
+            userRepository.decreasePromptCount(id, curr)
+            _user.value = _user.value?.copy(promptCount = curr)
         }
     }
 }

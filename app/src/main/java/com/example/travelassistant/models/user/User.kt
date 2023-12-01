@@ -22,7 +22,8 @@ data class User(
     val createdAt: Long = System.currentTimeMillis(),
     val keepLocationPrivate: Boolean = false,
     val points: Int = 0,
-    val todoList: List<TodoItem> = listOf()
+    val todoList: List<TodoItem> = listOf(),
+    val promptCount: Int
 ) {
     // https://medium.com/@eugenebrusov/firebase-needs-an-empty-constructor-to-be-able-to-deserialize-the-objects-2ddbd2c03620
     constructor() : this(
@@ -31,5 +32,6 @@ data class User(
         email = "",
         imageUrl = "",
         currentLocation = null,
+        promptCount = 0
     )
 }

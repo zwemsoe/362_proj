@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
+private const val PROMPT_LIMIT = 20
+
 class UserRepository {
     private val db = FirebaseFirestore.getInstance()
     private val usersCollection = db.collection("users")
@@ -43,7 +45,8 @@ class UserRepository {
             email = email,
             imageUrl = imageUrl.toString(),
             currentLocation = currentLocation,
-            keepLocationPrivate = keepLocationPrivate
+            keepLocationPrivate = keepLocationPrivate,
+            promptCount = PROMPT_LIMIT
         )
         usersCollection.document(user.id).set(user).await()
     }
@@ -54,6 +57,10 @@ class UserRepository {
 
     suspend fun updatePoints(userId: String, newPoints: Int) {
         usersCollection.document(userId).update("points", newPoints).await()
+    }
+
+    suspend fun decreasePromptCount(userId: String, newCount: Int) {
+        usersCollection.document(userId).update("promptCount", newCount).await()
     }
 
     suspend fun addTodoItem(userId: String, todoItem: TodoItem) {

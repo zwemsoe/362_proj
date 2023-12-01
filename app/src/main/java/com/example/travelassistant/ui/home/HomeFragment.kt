@@ -5,6 +5,9 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,12 +26,15 @@ import com.example.travelassistant.R
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CoordinatesUtil.getAddressFromLocation
+import com.example.travelassistant.utils.shakeAnimation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private const val MAX_QUESTION_LEN = 150
 
 class HomeFragment : Fragment() {
     private lateinit var view: View
@@ -46,6 +52,7 @@ class HomeFragment : Fragment() {
     private lateinit var copyAnswerButton: ImageButton
     private lateinit var showAnswerOnMapButton: ImageButton
     private lateinit var auth: FirebaseAuth
+    private var userPromptCount = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -61,6 +68,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initVars()
         initEditTextListener()
+        setMaxQuestionLength(MAX_QUESTION_LEN)
         listenCurrentUserChanges()
         listenQuestionAnswer()
         setupSuggestions()
@@ -104,21 +112,49 @@ class HomeFragment : Fragment() {
         userViewModel.getUser(auth.currentUser!!.uid)
     }
 
+    private fun setMaxNumOfQuestions(maxNumOfQuestions: Int) {
+        val questionLimitTextView = view.findViewById<TextView>(R.id.question_limit_text)
+        val str = "You have $maxNumOfQuestions questions left"
+        questionLimitTextView.text = str
+    }
+
+    private fun setMaxQuestionLength(maxCharLimit: Int) {
+        val charCountTextView = view.findViewById<TextView>(R.id.char_count_text)
+        charCountTextView.text = "0/$maxCharLimit"
+        questionEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val curr = s?.length ?: 0
+                charCountTextView.text = "$curr/$maxCharLimit"
+            }
+
+        })
+        questionEditText.filters = arrayOf(InputFilter.LengthFilter(maxCharLimit))
+    }
+
     private fun initEditTextListener() {
         questionEditText.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val text = v.text
-                if (text.isEmpty()) {
-                    true
-                }
-                onSubmitQuestion(text.toString())
+                handleSubmitQuestion(text.toString())
                 true
             }
             false
         }
     }
 
-    private fun onSubmitQuestion(question: String) {
+    private fun handleSubmitQuestion(question: String) {
+        if (question.isEmpty()) {
+            return
+        }
+        if (userPromptCount == 0) {
+            view.findViewById<ConstraintLayout>(R.id.question_limit_container).shakeAnimation()
+            return
+        }
+        userViewModel.decreasePromptCount(auth.currentUser!!.uid)
         hideSuggestionsOnQuestionSubmit()
         displayAnswerContainer()
         questionAnswerTextView.text = ""
@@ -147,10 +183,14 @@ class HomeFragment : Fragment() {
 
     private fun listenCurrentUserChanges() {
         userViewModel.user.observe(viewLifecycleOwner) { user ->
-            if (user != null && user.currentLocation == null) {
+            if (user == null) {
                 return@observe
             }
-            setUserLocationText(user)
+            if (user.currentLocation != null) {
+                setUserLocationText(user)
+            }
+            userPromptCount = user.promptCount
+            setMaxNumOfQuestions(user.promptCount)
         }
     }
 
@@ -181,6 +221,11 @@ class HomeFragment : Fragment() {
                 suggestionsContainer.addView(suggestionView)
             }
         }
+        generateSuggestions()
+    }
+
+    private fun generateSuggestions() {
+//        userViewModel.decreasePromptCount(auth.currentUser!!.uid)
         homeViewModel.generateSuggestions()
     }
 
@@ -195,7 +240,7 @@ class HomeFragment : Fragment() {
             suggestionView.findViewById<ConstraintLayout>(R.id.suggestion_clickable)
         suggestionClickable.setOnClickListener {
             questionEditText.setText(text)
-            onSubmitQuestion(text)
+            handleSubmitQuestion(text)
         }
         return suggestionView
     }

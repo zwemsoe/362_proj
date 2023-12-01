@@ -1,5 +1,6 @@
 package com.example.travelassistant.utils
 
+import android.animation.ObjectAnimator
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.AnticipateInterpolator
@@ -17,4 +18,24 @@ fun View.slideUpAnimation(
         .setInterpolator(AnticipateInterpolator())
         .setStartDelay(delay)
         .setDuration(duration)
+}
+
+fun View.shakeAnimation() {
+    val shake =
+        ObjectAnimator.ofFloat(
+            this,
+            "translationX",
+            0f,
+            25f,
+            -25f,
+            25f,
+            -25f,
+            15f,
+            -15f,
+            6f,
+            -6f,
+            0f
+        )
+    shake.duration = 1000
+    shake.start()
 }

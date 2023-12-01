@@ -21,14 +21,14 @@
 
         <TextView
             android:id="@+id/display_name_settings"
-            style="@style/GlobalTextStyle"
+            style="?colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hi!"
             android:textSize="40sp" />
 
         <TextView
-            style="@style/GlobalTextStyle"
+            style="?colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
