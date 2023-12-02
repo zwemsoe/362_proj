@@ -26,7 +26,6 @@ import com.example.travelassistant.R
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CoordinatesUtil.getAddressFromLocation
-import com.example.travelassistant.utils.multilineDone
 import com.example.travelassistant.utils.shakeAnimation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
@@ -74,13 +73,6 @@ class HomeFragment : Fragment() {
         listenQuestionAnswer()
         setupSuggestions()
 
-        if (qnaSessionExists()) {
-            switchToQnAMode()
-        }
-
-
-
-
         copyAnswerButton.setOnClickListener {
             val clipboardManager =
                 it.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -120,7 +112,6 @@ class HomeFragment : Fragment() {
         userViewModel.getUser(auth.currentUser!!.uid)
     }
 
-
     private fun setMaxNumOfQuestions(maxNumOfQuestions: Int) {
         val questionLimitTextView = view.findViewById<TextView>(R.id.question_limit_text)
         val str = "You have $maxNumOfQuestions questions left"
@@ -145,9 +136,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun initEditTextListener() {
-        questionEditText.multilineDone { v, _, _ ->
-            handleSubmitQuestion(v.text.toString())
-            true
+        questionEditText.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val text = v.text
+                handleSubmitQuestion(text.toString())
+                true
+            }
+            false
         }
     }
 
@@ -160,20 +155,10 @@ class HomeFragment : Fragment() {
             return
         }
         userViewModel.decreasePromptCount(auth.currentUser!!.uid)
-        switchToQnAMode()
-        questionAnswerTextView.text = ""
-        homeViewModel.submitQuestion(question)
-    }
-
-    private fun qnaSessionExists(): Boolean {
-        val qExists = homeViewModel.question.value?.isNotEmpty() == true
-        val aExists = homeViewModel.questionAnswer.value?.isNotEmpty() == true
-        return qExists && aExists
-    }
-
-    private fun switchToQnAMode() {
         hideSuggestionsOnQuestionSubmit()
         displayAnswerContainer()
+        questionAnswerTextView.text = ""
+        homeViewModel.submitQuestion(question)
     }
 
     private fun hideSuggestionsOnQuestionSubmit() {
@@ -236,6 +221,12 @@ class HomeFragment : Fragment() {
                 suggestionsContainer.addView(suggestionView)
             }
         }
+        generateSuggestions()
+    }
+
+    private fun generateSuggestions() {
+//        userViewModel.decreasePromptCount(auth.currentUser!!.uid)
+        homeViewModel.generateSuggestions()
     }
 
     private fun createSuggestion(text: String): View {
