@@ -1,17 +1,21 @@
 package com.example.travelassistant.ui.home
 
+
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -30,10 +34,12 @@ import com.example.travelassistant.utils.multilineDone
 import com.example.travelassistant.utils.shakeAnimation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 private const val MAX_QUESTION_LEN = 150
 
@@ -53,7 +59,11 @@ class HomeFragment : Fragment() {
     private lateinit var copyAnswerButton: ImageButton
     private lateinit var showAnswerOnMapButton: ImageButton
     private lateinit var auth: FirebaseAuth
+    private lateinit var micBtn: FloatingActionButton
+    private var isListening = false
+    private lateinit var speechRecognizer: SpeechRecognizer
     private var userPromptCount = 0
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -61,7 +71,6 @@ class HomeFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         this.inflater = inflater
         view = inflater.inflate(R.layout.fragment_home, container, false)
-
         return view
     }
 
@@ -74,12 +83,18 @@ class HomeFragment : Fragment() {
         listenQuestionAnswer()
         setupSuggestions()
 
+        micBtn = view.findViewById(R.id.mic_fab)
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(requireContext())
+        setupSpeechToText()
+
+        micBtn.setOnClickListener {
+            toggleSpeechRecognition()
+        }
+
         if (qnaSessionExists()) {
             switchToQnAMode()
         }
-
-
-
 
         copyAnswerButton.setOnClickListener {
             val clipboardManager =
@@ -252,5 +267,84 @@ class HomeFragment : Fragment() {
             handleSubmitQuestion(text)
         }
         return suggestionView
+    }
+
+
+    private fun toggleSpeechRecognition() {
+        if (isListening) {
+            questionEditText.isEnabled = true
+            speechRecognizer.stopListening()
+            micBtn.setImageResource(R.drawable.ic_mic_off)
+        } else {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                )
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            }
+            speechRecognizer.startListening(intent)
+            questionEditText.isEnabled = false
+            micBtn.setImageResource(R.drawable.ic_mic_on)
+            Toast.makeText(context, "Started listening", Toast.LENGTH_SHORT).show()
+        }
+        isListening = !isListening
+    }
+
+    private fun setupSpeechToText() {
+        speechRecognizer.setRecognitionListener(object : RecognitionListener {
+            override fun onResults(results: Bundle?) {
+                results?.let {
+                    val matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    if (!matches.isNullOrEmpty()) {
+                        questionEditText.setText(matches[0])
+                    }
+                }
+            }
+
+            override fun onPartialResults(partialResults: Bundle?) {
+                partialResults?.let {
+                    val matches =
+                        partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    if (!matches.isNullOrEmpty()) {
+                        questionEditText.setText(matches[0])
+                    }
+                }
+            }
+
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {}
+            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onEndOfSpeech() {
+                questionEditText.isEnabled = true
+                speechRecognizer.stopListening()
+                micBtn.setImageResource(R.drawable.ic_mic_off)
+                micBtn.setBackgroundResource(com.google.android.libraries.places.R.color.quantum_googred600)
+            }
+
+            override fun onError(error: Int) {
+                if (error == SpeechRecognizer.ERROR_NO_MATCH) {
+                    Toast.makeText(
+                        context,
+                        "I didn't catch that. Please try speaking again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                questionEditText.isEnabled = true
+            }
+
+            override fun onEvent(eventType: Int, params: Bundle?) {}
+        })
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (this::speechRecognizer.isInitialized) {
+            speechRecognizer.destroy()
+        }
+
     }
 }

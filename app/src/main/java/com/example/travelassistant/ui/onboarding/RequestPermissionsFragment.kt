@@ -32,7 +32,8 @@ class RequestPermissionsFragment : Fragment() {
     private val permissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.CAMERA
+        Manifest.permission.CAMERA,
+        Manifest.permission.RECORD_AUDIO
     )
     private val permissionsResultCallback = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -114,7 +115,10 @@ class RequestPermissionsFragment : Fragment() {
         val hasCameraPermission = PermissionUtil.hasPermission(
             requireContext(), Manifest.permission.CAMERA
         )
-        return hasLocationPermissions and hasCameraPermission
+        val hasRecordAudioPermission = PermissionUtil.hasPermission(
+            requireContext(), Manifest.permission.RECORD_AUDIO
+        )
+        return hasLocationPermissions and hasCameraPermission and hasRecordAudioPermission
     }
 
     private fun requestPermissions() {
