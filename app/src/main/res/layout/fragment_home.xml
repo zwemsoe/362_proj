@@ -13,6 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,6 +53,7 @@
                 app:tint="@color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
         <EditText
             android:id="@+id/home_question_input"
             android:layout_width="0dp"
@@ -87,7 +90,8 @@
             android:src="@drawable/ic_search"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.477" />
 
         <TextView
             android:id="@+id/home_user_location_text"
@@ -97,6 +101,23 @@
             android:text="..."
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@+id/home_question_input" />
+
+        <ImageButton
+            android:id="@+id/mic_fab"
+            android:layout_width="50dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end|bottom"
+            android:background="@drawable/bubble"
+            android:contentDescription="Mic"
+            android:src="@drawable/ic_mic_off"
+            app:layout_constraintBottom_toTopOf="@+id/home_question_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/question_limit_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".0"
+            app:tint="@color/white" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -180,7 +201,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
