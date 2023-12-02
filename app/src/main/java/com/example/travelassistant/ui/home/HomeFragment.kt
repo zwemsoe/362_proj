@@ -34,7 +34,6 @@ import com.example.travelassistant.utils.multilineDone
 import com.example.travelassistant.utils.shakeAnimation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -129,7 +128,8 @@ class HomeFragment : Fragment() {
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
-            this, UserViewModelFactory(userRepository)
+            requireActivity() /* Do not change to "this" */,
+            UserViewModelFactory(userRepository)
         )[UserViewModel::class.java]
 
         userViewModel.getUser(auth.currentUser!!.uid)
@@ -138,7 +138,8 @@ class HomeFragment : Fragment() {
 
     private fun setMaxNumOfQuestions(maxNumOfQuestions: Int) {
         val questionLimitTextView = view.findViewById<TextView>(R.id.question_limit_text)
-        val str = "You have $maxNumOfQuestions questions left"
+        val qStr = if (maxNumOfQuestions == 1) "question" else "questions"
+        val str = "You have $maxNumOfQuestions $qStr left"
         questionLimitTextView.text = str
     }
 

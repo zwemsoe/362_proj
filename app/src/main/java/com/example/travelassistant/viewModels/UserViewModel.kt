@@ -16,17 +16,18 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
-    val _user = MutableLiveData<User>()
+    private val _user = MutableLiveData<User>()
     val user: LiveData<User> = _user
 
 
     fun getUser(userId: String) {
         viewModelScope.launch {
             userRepository.getById(userId).collect { userData ->
-                _user.postValue(userData)
-                if (userData != null) {
-                    TravelAssistant.setUser(userData)
+                if (userData == null) {
+                    return@collect
                 }
+                _user.postValue(userData!!)
+                TravelAssistant.setUser(userData)
             }
         }
     }
@@ -49,6 +50,7 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
                 currentLocation,
                 keepLocationPrivate = keepLocationPrivate
             )
+            getUser(id)
         }
     }
 
