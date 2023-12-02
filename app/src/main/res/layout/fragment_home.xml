@@ -73,7 +73,6 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:alpha="0.4"
-            android:text="123/123"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@id/home_question_input"
             app:layout_constraintEnd_toEndOf="@+id/home_question_input"
