@@ -59,7 +59,7 @@ class HomeFragment : Fragment() {
     private lateinit var copyAnswerButton: ImageButton
     private lateinit var showAnswerOnMapButton: ImageButton
     private lateinit var auth: FirebaseAuth
-    private lateinit var micBtn: FloatingActionButton
+    private lateinit var micBtn: ImageButton
     private var isListening = false
     private lateinit var speechRecognizer: SpeechRecognizer
     private var userPromptCount = 0
