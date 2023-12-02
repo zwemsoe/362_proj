@@ -161,8 +161,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun initEditTextListener() {
-        questionEditText.multilineDone { v, _, _ ->
-            handleSubmitQuestion(v.text.toString())
+        questionEditText.multilineDone { str ->
+            handleSubmitQuestion(str)
             true
         }
     }
