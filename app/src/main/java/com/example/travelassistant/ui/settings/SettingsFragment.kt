@@ -1,5 +1,6 @@
 package com.example.travelassistant.ui.settings
 
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,6 @@ import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.travelassistant.BuildConfig
 import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
@@ -36,6 +36,7 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
 
@@ -87,9 +88,16 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             val location = GeoPoint(currentLocation.latitude, currentLocation.longitude)
             val keepLocationPrivate = keepPrivateCheckBox.isChecked
             if (!displayName.isNullOrEmpty() && auth.currentUser!!.photoUrl != null) {
-                userViewModel.onboard(userId, displayName, email!!, auth.currentUser!!.photoUrl!!, location, keepLocationPrivate)
+                userViewModel.onboard(
+                    userId,
+                    displayName,
+                    email!!,
+                    auth.currentUser!!.photoUrl!!,
+                    location,
+                    keepLocationPrivate
+                )
             }
-            findNavController().navigate(R.id.action_nav_settings_to_nav_home)
+            navigateToHome()
         }
 
         userLocationTextView.setOnItemClickListener { parent, _, position, _ ->
@@ -208,5 +216,14 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             googleMap.animateCamera(cameraUpdate)
 
         }
+    }
+
+    /**
+     * Hacky solution, needs fixing
+     */
+    private fun navigateToHome() {
+        // findNavController().navigate(R.id.action_nav_settings_to_nav_home)
+        requireActivity().findViewById<NavigationView>(R.id.nav_view)
+            .findViewById<View>(R.id.nav_home).performClick()
     }
 }
