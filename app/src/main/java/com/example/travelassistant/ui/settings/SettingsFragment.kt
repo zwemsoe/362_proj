@@ -16,9 +16,11 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.travelassistant.BuildConfig
 import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.utils.CommonUtil.extractDisplayName
 import com.example.travelassistant.utils.CoordinatesUtil
 import com.example.travelassistant.viewModels.OnboardingViewModel
 import com.example.travelassistant.viewModels.UserViewModel
@@ -39,7 +41,6 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.Dispatchers
@@ -111,14 +112,14 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
                     location,
                     keepLocationPrivate
                 )
-                Toast.makeText(requireContext(), "Saved changes.", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Saved changes.", Toast.LENGTH_SHORT).show()
             }
 
         }
 
         userViewModel.user.observe(viewLifecycleOwner) {
             if (it != null) {
-                nameTextView.text = "Hi, ${it.displayName}!"
+                nameTextView.text = "Hi, ${extractDisplayName(it.displayName)}!"
                 keepPrivateCheckBox.isChecked = it.keepLocationPrivate
                 setCurrentLocation(
                     GeoPoint(
@@ -156,7 +157,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             nameTextView.text = "Hi, $it!"
         }
 
-        if(userViewModel.user.value == null){
+        if (userViewModel.user.value == null) {
             onboardingViewModel.fetchLastLocation(requireActivity(), locationProviderClient)
         }
     }
@@ -254,15 +255,15 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             showMarker(latLng)
         }
 
-        userViewModel.user.observe(viewLifecycleOwner){
-            if(it != null){
-                val latLng = LatLng(it.currentLocation!!.latitude,it.currentLocation!!.longitude)
+        userViewModel.user.observe(viewLifecycleOwner) {
+            if (it != null) {
+                val latLng = LatLng(it.currentLocation!!.latitude, it.currentLocation!!.longitude)
                 showMarker(latLng)
             }
         }
     }
 
-    private fun showMarker(latLng: LatLng){
+    private fun showMarker(latLng: LatLng) {
         val markerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
         marker?.remove()
         marker = googleMap.addMarker(

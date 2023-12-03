@@ -10,4 +10,7 @@ object CommonUtil {
         return formatter.format(Date(date))
     }
 
+    fun extractDisplayName(username: String): String {
+        return username.split(' ')[0]
+    }
 }
