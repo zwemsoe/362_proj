@@ -11,12 +11,17 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.travelassistant.BuildConfig
 import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.utils.CommonUtil.extractDisplayName
+import com.example.travelassistant.utils.CoordinatesUtil
 import com.example.travelassistant.viewModels.OnboardingViewModel
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
@@ -36,9 +41,11 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class SettingsFragment : Fragment(), OnMapReadyCallback {
@@ -87,17 +94,40 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
 
             val location = GeoPoint(currentLocation.latitude, currentLocation.longitude)
             val keepLocationPrivate = keepPrivateCheckBox.isChecked
-            if (!displayName.isNullOrEmpty() && auth.currentUser!!.photoUrl != null) {
-                userViewModel.onboard(
+            if (userViewModel.user.value == null) {
+                if (!displayName.isNullOrEmpty() && auth.currentUser!!.photoUrl != null) {
+                    userViewModel.onboard(
+                        userId,
+                        displayName,
+                        email!!,
+                        auth.currentUser!!.photoUrl!!,
+                        location,
+                        keepLocationPrivate
+                    )
+                }
+                navigateToHome()
+            } else {
+                userViewModel.updateSettings(
                     userId,
-                    displayName,
-                    email!!,
-                    auth.currentUser!!.photoUrl!!,
                     location,
                     keepLocationPrivate
                 )
+                Toast.makeText(requireContext(), "Saved changes.", Toast.LENGTH_SHORT).show()
             }
-            navigateToHome()
+
+        }
+
+        userViewModel.user.observe(viewLifecycleOwner) {
+            if (it != null) {
+                nameTextView.text = "Hi, ${extractDisplayName(it.displayName)}!"
+                keepPrivateCheckBox.isChecked = it.keepLocationPrivate
+                setCurrentLocation(
+                    GeoPoint(
+                        it.currentLocation!!.latitude,
+                        it.currentLocation!!.longitude
+                    )
+                )
+            }
         }
 
         userLocationTextView.setOnItemClickListener { parent, _, position, _ ->
@@ -127,7 +157,21 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
             nameTextView.text = "Hi, $it!"
         }
 
-        onboardingViewModel.fetchLastLocation(requireActivity(), locationProviderClient)
+        if (userViewModel.user.value == null) {
+            onboardingViewModel.fetchLastLocation(requireActivity(), locationProviderClient)
+        }
+    }
+
+    private fun setCurrentLocation(currentLocation: GeoPoint) {
+        lifecycleScope.launch {
+            val addressList =
+                CoordinatesUtil.getAddressFromLocation(requireContext(), currentLocation)
+            withContext(Dispatchers.Main) {
+                if (addressList.isNotEmpty()) {
+                    userLocationTextView.setText(addressList[0].getAddressLine(0))
+                }
+            }
+        }
     }
 
     private fun onEditLocationButtonClicked() {
@@ -156,7 +200,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
 
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
-            this@SettingsFragment, UserViewModelFactory(userRepository)
+            requireActivity(), UserViewModelFactory(userRepository)
         )[UserViewModel::class.java]
         placesClient = Places.createClient(requireContext())
     }
@@ -205,25 +249,31 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(p0: GoogleMap) {
         googleMap = p0
-        val markerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+
         onboardingViewModel.locationLatLng.observe(viewLifecycleOwner) {
             val latLng = LatLng(it.latitude, it.longitude)
-            marker?.remove()
-            marker = googleMap.addMarker(
-                MarkerOptions().position(latLng).title("You").icon(markerIcon)
-            )
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
-            googleMap.animateCamera(cameraUpdate)
+            showMarker(latLng)
+        }
 
+        userViewModel.user.observe(viewLifecycleOwner) {
+            if (it != null) {
+                val latLng = LatLng(it.currentLocation!!.latitude, it.currentLocation!!.longitude)
+                showMarker(latLng)
+            }
         }
     }
 
-    /**
-     * Hacky solution, needs fixing
-     */
+    private fun showMarker(latLng: LatLng) {
+        val markerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+        marker?.remove()
+        marker = googleMap.addMarker(
+            MarkerOptions().position(latLng).title("You").icon(markerIcon)
+        )
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+        googleMap.animateCamera(cameraUpdate)
+    }
+
     private fun navigateToHome() {
-        // findNavController().navigate(R.id.action_nav_settings_to_nav_home)
-        requireActivity().findViewById<NavigationView>(R.id.nav_view)
-            .findViewById<View>(R.id.nav_home).performClick()
+        findNavController().navigate(R.id.action_nav_settings_to_nav_home)
     }
 }
