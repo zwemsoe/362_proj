@@ -15,15 +15,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelassistant.R
-import com.example.travelassistant.manager.DataStoreManager
 import com.example.travelassistant.models.user.TodoItem
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
 import java.util.UUID
 
 
@@ -33,15 +30,21 @@ class TodoFragment : Fragment() {
     private lateinit var viewModel: TodoViewModel
 
     private lateinit var todoListView : RecyclerView
+    private lateinit var todoListAdapter : TodoRecyclerAdapter
     private var todoList : List<TodoItem> = listOf()
+    private lateinit var myUser : String
 
-    private lateinit var dataStoreManager: DataStoreManager
     private lateinit var userRepository: UserRepository
     private lateinit var userViewModel: UserViewModel
+    private lateinit var auth: FirebaseAuth
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        dataStoreManager = DataStoreManager(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -59,19 +62,21 @@ class TodoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         todoListView = view.findViewById(R.id.todo_created_container)
-        observeDataStoreChanges()
+        //observeDataStoreChanges()
 
+        userViewModel.getUser(auth.currentUser!!.uid)
         userViewModel.user.observe(viewLifecycleOwner) { user ->
             if (user == null) {
                 return@observe
             }
+            myUser = user.id
             setupButtons(user)
-            setupSuggestions(user)
             getUserTodoList(user)
         }
+        setupSuggestions()
     }
 
-    private fun setupSuggestions(user : User) {
+    private fun setupSuggestions() {
         val container = view.findViewById<LinearLayout>(R.id.todo_suggestions_container)
         val loadingOrFail = TextView(requireContext())
         loadingOrFail.text = "Loading..."
@@ -93,7 +98,7 @@ class TodoFragment : Fragment() {
                     val item = TodoItem(itemID,"", false)
 
                     item.task = suggestion
-                    userViewModel.addTodoItem(user.id,item)
+                    userViewModel.addTodoItem(myUser,item)
                     todoListView.adapter?.notifyItemInserted(todoList.size)
 
                     Toast.makeText(requireContext(), "Added suggestion!", Toast.LENGTH_SHORT).show()
@@ -132,15 +137,9 @@ class TodoFragment : Fragment() {
     //Initiate todoList
     private fun getUserTodoList(user : User) {
         todoList = user.todoList
-        todoListView.adapter = TodoRecyclerAdapter(todoList, userViewModel, user.id)
-    }
-
-    private fun observeDataStoreChanges() {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStoreManager.userIdFlow.collect { userId ->
-                println("ACCESS USERID HERE: $userId")
-                userViewModel.getUser(userId)
-            }
-        }
+        todoListAdapter = TodoRecyclerAdapter(userViewModel, user.id)
+        todoListAdapter.setTodoList(todoList)
+        todoListView.adapter = todoListAdapter
+        todoListAdapter.notifyDataSetChanged()
     }
 }
