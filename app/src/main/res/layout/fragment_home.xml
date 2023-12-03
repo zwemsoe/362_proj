@@ -5,13 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="60dp"
+    android:theme="@style/DayNightLayout"
     tools:context=".ui.home.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/input_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/question_limit_container"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bubble"
+            android:padding="5dp"
+            app:layout_constraintBottom_toTopOf="@id/home_question_input"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/question_limit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="?colorPrimary"
+                android:src="@drawable/ic_shopping_cart"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/question_limit_text"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <EditText
             android:id="@+id/home_question_input"
@@ -20,25 +61,39 @@
             android:hint="Ask me anything!"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
-            android:inputType="text"
-            android:maxLines="3"
             android:paddingStart="10dp"
+            android:paddingEnd="65dp"
+            android:scrollHorizontally="false"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/search_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/char_count_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:alpha="0.4"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/home_question_input"
+            app:layout_constraintEnd_toEndOf="@+id/home_question_input"
+            app:layout_constraintTop_toTopOf="@id/home_question_input" />
+
         <ImageView
             android:id="@+id/search_image"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="12dp"
+            android:clickable="true"
             android:contentDescription="Ask"
+            android:focusable="true"
             android:src="@drawable/ic_search"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.477" />
 
         <TextView
             android:id="@+id/home_user_location_text"
@@ -48,6 +103,23 @@
             android:text="..."
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@+id/home_question_input" />
+
+        <ImageButton
+            android:id="@+id/mic_fab"
+            android:layout_width="50dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end|bottom"
+            android:background="@drawable/bubble"
+            android:contentDescription="Mic"
+            android:src="@drawable/ic_mic_off"
+            app:layout_constraintBottom_toTopOf="@+id/home_question_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/question_limit_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".0"
+            app:tint="@color/white" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -62,7 +134,7 @@
             android:id="@+id/copy_answer_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#fff"
+            android:backgroundTint="?colorOnPrimary"
             android:src="@drawable/ic_copy"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -71,7 +143,7 @@
             android:id="@+id/answer_map_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#fff"
+            android:backgroundTint="?colorOnPrimary"
             android:src="@drawable/ic_map"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -81,13 +153,14 @@
         android:id="@+id/answer_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="#5061FF"
+        android:background="?colorPrimary"
         android:padding="20dp"
         android:visibility="gone"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_container"
+        app:layout_constraintVertical_bias="1">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -98,6 +171,7 @@
                 android:id="@+id/answer_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?colorPrimary"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
@@ -114,7 +188,9 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_container"
+        app:layout_constraintVertical_bias="1">
 
         <TextView
             android:layout_width="wrap_content"
@@ -127,7 +203,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

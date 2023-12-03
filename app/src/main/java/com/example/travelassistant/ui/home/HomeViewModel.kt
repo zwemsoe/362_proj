@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelassistant.openai.TravelAssistant
-import com.example.travelassistant.openai.TravelAssistantChat
-import com.example.travelassistant.openai.TravelAssistantConstants
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -15,8 +13,14 @@ class HomeViewModel : ViewModel() {
     val suggestedQuestionList: LiveData<List<String>> = _suggestedQuestionList
     private val _questionAnswer = MutableLiveData("")
     val questionAnswer get() = _questionAnswer
+    private val _question = MutableLiveData("")
+    val question get() = _question
 
-    fun generateSuggestions() {
+    init {
+        generateSuggestions()
+    }
+
+    private fun generateSuggestions() {
         var responseText = ""
         viewModelScope.launch {
             TravelAssistant.askQuestionSuggestions().collect {
@@ -44,10 +48,15 @@ class HomeViewModel : ViewModel() {
         return todoPattern.findAll(response).map { it.groupValues[1] }.toList()
     }
 
-    fun submitQuestion(question: String) {
+    /**
+     * Must ensure validity of the string before
+     * calling this function
+     */
+    fun submitQuestion(q: String) {
+        _question.value = q
         _questionAnswer.value = ""
         viewModelScope.launch {
-            TravelAssistant.ask(question).collect {
+            TravelAssistant.ask(q).collect {
                 it.choices.forEach { chatChoice ->
                     if (chatChoice.delta.content == null) {
                         return@collect

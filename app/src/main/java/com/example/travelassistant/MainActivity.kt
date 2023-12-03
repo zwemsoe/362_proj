@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userRepository: UserRepository
     private lateinit var userViewModel: UserViewModel
     private lateinit var auth: FirebaseAuth
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        navController = findNavController(R.id.nav_host_fragment_content_main)
 
         val navView: NavigationView = binding.navView
         val headerView = navView.getHeaderView(0)
@@ -60,12 +62,10 @@ class MainActivity : AppCompatActivity() {
         userViewModel.getUser(auth.currentUser!!.uid)
 
         userViewModel.user.observe(this) {
-            if (it != null){
+            if (it != null) {
                 nameTextView.text = it.displayName
                 emailTextView.text = it.email
-                Glide.with(this)
-                    .load(auth.currentUser!!.photoUrl)
-                    .into(imageView)
+                Glide.with(this).load(auth.currentUser!!.photoUrl).into(imageView)
             }
 
         }
@@ -93,7 +93,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 

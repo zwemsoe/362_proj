@@ -3,45 +3,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/DayNightLayout"
     tools:context=".ui.reputations.ReputationsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:padding="16dp">
 
         <ImageView
             android:id="@+id/imageViewProfile"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_profile_image"
+            android:layout_gravity="center_horizontal"
             android:contentDescription="@string/profile_image_description"
-            android:layout_gravity="center_horizontal" />
+            android:src="@drawable/ic_profile_image" />
 
         <TextView
             android:id="@+id/textViewReputationTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your reputation point is 9!"
             android:layout_marginTop="8dp"
             android:gravity="center_horizontal"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:text="Your reputation point is 9!"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textViewReputationDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Which means you have visited 9 unique locations so far!"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:text="Which means you have visited 9 unique locations so far!" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Most Reputable Users"
             android:layout_marginTop="45dp"
+            android:text="Most Reputable Users"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
@@ -50,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@android:color/darker_gray"
-            android:dividerHeight="0.5dp"/>
+            android:dividerHeight="0.5dp" />
 
     </LinearLayout>
 

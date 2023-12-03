@@ -16,29 +16,41 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
-    val _user = MutableLiveData<User>()
+    private val _user = MutableLiveData<User>()
     val user: LiveData<User> = _user
 
 
     fun getUser(userId: String) {
         viewModelScope.launch {
             userRepository.getById(userId).collect { userData ->
-                _user.postValue(userData)
-                if (userData != null) {
-                    TravelAssistant.setUser(userData)
+                if (userData == null) {
+                    return@collect
                 }
+                _user.postValue(userData!!)
+                TravelAssistant.setUser(userData)
             }
         }
     }
 
 
     fun onboard(
-        id: String, displayName: String, email: String, imageURL: Uri, currentLocation: GeoPoint, keepLocationPrivate: Boolean
+        id: String,
+        displayName: String,
+        email: String,
+        imageURL: Uri,
+        currentLocation: GeoPoint,
+        keepLocationPrivate: Boolean
     ) {
         viewModelScope.launch {
             userRepository.onboard(
-                id, displayName, email, imageURL,currentLocation, keepLocationPrivate = keepLocationPrivate
+                id,
+                displayName,
+                email,
+                imageURL,
+                currentLocation,
+                keepLocationPrivate = keepLocationPrivate
             )
+            getUser(id)
         }
     }
 
@@ -88,6 +100,16 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
             _user.value?.todoList?.let {
                 _user.value?.copy(todoList = it)
             }
+        }
+    }
+
+    fun decreasePromptCount(id: String) {
+        viewModelScope.launch {
+            var curr = _user.value?.promptCount ?: 0
+            curr = if (curr == 0) 0 else curr - 1
+
+            userRepository.decreasePromptCount(id, curr)
+            _user.value = _user.value?.copy(promptCount = curr)
         }
     }
 }

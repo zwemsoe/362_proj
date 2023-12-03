@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="10dp"
     android:paddingVertical="20dp"
+    android:theme="@style/DayNightLayout"
     tools:context=".ui.settings.SettingsFragment">
 
     <LinearLayout
@@ -20,20 +21,20 @@
 
         <TextView
             android:id="@+id/display_name_settings"
+            style="?colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hi!"
-            android:textSize="40sp"
-            style="@style/GlobalTextStyle"/>
+            android:textSize="40sp" />
 
         <TextView
+            style="?colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="20dp"
             android:text="Looks like you are at"
-            android:textSize="24sp"
-            style="@style/GlobalTextStyle"/>
+            android:textSize="24sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -67,8 +68,8 @@
 
     <FrameLayout
         android:id="@+id/map_fragment_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         app:layout_constraintBottom_toTopOf="@id/location_privacy_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -106,9 +107,9 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:height="50dp"
+        android:background="@drawable/rounded_button"
         android:text="Looks Good!"
         android:textAllCaps="false"
-        android:background="@drawable/rounded_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

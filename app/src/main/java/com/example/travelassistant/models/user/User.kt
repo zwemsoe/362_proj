@@ -4,8 +4,8 @@ import android.net.Uri
 import com.google.firebase.firestore.GeoPoint
 
 data class TodoItem(
-    val id: String, var task: String, var completed: Boolean
-){
+    val id: String, val task: String, val completed: Boolean
+) {
     constructor() : this(
         id = "",
         task = "",
@@ -17,19 +17,21 @@ data class User(
     val id: String,
     val displayName: String,
     val email: String,
-    val imageUrl: Uri,
+    val imageUrl: String?,
     val currentLocation: GeoPoint?,
     val createdAt: Long = System.currentTimeMillis(),
     val keepLocationPrivate: Boolean = false,
     val points: Int = 0,
-    val todoList: List<TodoItem> = listOf()
+    val todoList: List<TodoItem> = listOf(),
+    val promptCount: Int
 ) {
     // https://medium.com/@eugenebrusov/firebase-needs-an-empty-constructor-to-be-able-to-deserialize-the-objects-2ddbd2c03620
     constructor() : this(
         id = "",
         displayName = "",
         email = "",
-        imageUrl= Uri.EMPTY,
+        imageUrl = "",
         currentLocation = null,
+        promptCount = 0
     )
 }
