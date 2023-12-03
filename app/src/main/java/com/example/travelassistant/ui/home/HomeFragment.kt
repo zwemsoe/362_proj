@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -30,6 +31,7 @@ import com.example.travelassistant.R
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CoordinatesUtil.getAddressFromLocation
+import com.example.travelassistant.utils.hideKeyboard
 import com.example.travelassistant.utils.multilineDone
 import com.example.travelassistant.utils.shakeAnimation
 import com.example.travelassistant.viewModels.UserViewModel
@@ -62,6 +64,7 @@ class HomeFragment : Fragment() {
     private var isListening = false
     private lateinit var speechRecognizer: SpeechRecognizer
     private var userPromptCount = 0
+    private lateinit var searchImageButton: ImageView
 
 
     override fun onCreateView(
@@ -124,6 +127,7 @@ class HomeFragment : Fragment() {
         copyAnswerButton = view.findViewById(R.id.copy_answer_button)
         showAnswerOnMapButton = view.findViewById(R.id.answer_map_button)
         showAnswerOnMapButton.isEnabled = false // TODO
+        searchImageButton = view.findViewById(R.id.search_image)
 
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         userRepository = UserRepository()
@@ -164,6 +168,11 @@ class HomeFragment : Fragment() {
         questionEditText.multilineDone { str ->
             handleSubmitQuestion(str)
             true
+        }
+        searchImageButton.setOnClickListener {
+            val curr = questionEditText.text.toString()
+            handleSubmitQuestion(curr)
+            hideKeyboard()
         }
     }
 
@@ -298,9 +307,11 @@ class HomeFragment : Fragment() {
             override fun onResults(results: Bundle?) {
                 results?.let {
                     val matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                    if (!matches.isNullOrEmpty()) {
-                        questionEditText.setText(matches[0])
+                    if (matches.isNullOrEmpty()) {
+                        return@let
                     }
+                    questionEditText.setText(matches[0])
+                    handleSubmitQuestion(matches[0])
                 }
             }
 
@@ -322,7 +333,7 @@ class HomeFragment : Fragment() {
                 questionEditText.isEnabled = true
                 speechRecognizer.stopListening()
                 micBtn.setImageResource(R.drawable.ic_mic_off)
-                micBtn.setBackgroundResource(com.google.android.libraries.places.R.color.quantum_googred600)
+//                micBtn.setBackgroundResource(com.google.android.libraries.places.R.color.quantum_googred600)
             }
 
             override fun onError(error: Int) {
