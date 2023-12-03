@@ -54,10 +54,10 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
-    fun updateName(id: String, newName: String) {
+    fun updateSettings(id: String, location: GeoPoint, keepLocationPrivate: Boolean) {
         viewModelScope.launch {
-            userRepository.updateName(id, newName)
-            _user.value = _user.value?.copy(displayName = newName)
+            userRepository.updateSettings(id, location, keepLocationPrivate )
+            _user.value = _user.value?.copy(currentLocation = location, keepLocationPrivate = keepLocationPrivate)
         }
     }
 

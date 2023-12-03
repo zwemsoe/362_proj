@@ -51,8 +51,12 @@ class UserRepository {
         usersCollection.document(user.id).set(user).await()
     }
 
-    suspend fun updateName(userId: String, name: String) {
-        usersCollection.document(userId).update("displayName", name).await()
+    suspend fun updateSettings(userId: String, location: GeoPoint, keepLocationPrivate: Boolean) {
+        val updates = hashMapOf<String, Any>(
+            "currentLocation" to location,
+            "keepLocationPrivate" to keepLocationPrivate
+        )
+        usersCollection.document(userId).update(updates).await()
     }
 
     suspend fun updatePoints(userId: String, newPoints: Int) {
@@ -106,4 +110,6 @@ class UserRepository {
             transaction.update(doc, "todoList", updatedTodoList)
         }.await()
     }
+
+
 }
