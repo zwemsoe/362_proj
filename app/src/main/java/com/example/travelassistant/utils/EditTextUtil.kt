@@ -24,12 +24,12 @@ private fun EditText.multilineIme(action: Int) {
 /**
  * https://stackoverflow.com/a/59779604/5895675
  */
-fun EditText.multilineDone(callback: ((TextView, Int, KeyEvent) -> Unit)? = null) {
+fun EditText.multilineDone(callback: ((String) -> Unit)? = null) {
     val action = EditorInfo.IME_ACTION_DONE
     multilineIme(action)
-    setOnEditorActionListener { editTextView, actionId, keyEvent ->
+    setOnEditorActionListener { editTextView, actionId, _ ->
         if (action == actionId) {
-            callback?.invoke(editTextView, actionId, keyEvent)
+            callback?.invoke(editTextView.text.toString())
             true
         }
         false
