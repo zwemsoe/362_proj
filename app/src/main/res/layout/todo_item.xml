@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginVertical="5dp"
-    android:orientation="horizontal">
-
-    <CheckBox
-        android:id="@+id/checkbox_todo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/textview_todo"
-        android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textSize="14sp" />
+        android:layout_marginVertical="5dp"
+        android:orientation="horizontal">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/delete_button"
-            android:background="@drawable/rounded_button"
-            android:layout_width="38dp"
-            android:layout_height="40dp"
-            android:text="X"
-            android:visibility="invisible"
-            android:textSize="14sp"
-            android:layout_marginTop="0dp"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
+        <CheckBox
+            android:id="@+id/checkbox_todo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/textview_todo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textSize="14sp" />
+    </LinearLayout>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/delete_button"
+        android:background="@drawable/rounded_button"
+        android:layout_width="38dp"
+        android:layout_height="40dp"
+        android:text="X"
+        android:visibility="invisible"
+        android:textSize="14sp"
+        android:layout_marginTop="0dp"
+        android:layout_alignParentRight="true"/>
+</RelativeLayout>
