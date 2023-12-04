@@ -18,7 +18,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.travelassistant.databinding.ActivityMainBinding
 import com.example.travelassistant.models.user.UserRepository
-import com.example.travelassistant.viewModels.NavigationViewModel
+import com.example.travelassistant.viewModels.ProfileViewModel
+import com.example.travelassistant.viewModels.ProfileViewModelFactory
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
 import com.google.android.material.navigation.NavigationView
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var auth: FirebaseAuth
     private lateinit var navController: NavController
-    private lateinit var navigationViewModel: NavigationViewModel
+    private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +62,9 @@ class MainActivity : AppCompatActivity() {
             this, UserViewModelFactory(userRepository)
         )[UserViewModel::class.java]
 
-        navigationViewModel = ViewModelProvider(this)[NavigationViewModel::class.java]
+        profileViewModel = ViewModelProvider(
+            this, ProfileViewModelFactory(userRepository)
+        )[ProfileViewModel::class.java]
 
         userViewModel.getUser(auth.currentUser!!.uid)
 
@@ -117,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     private fun myProfileNavMenuItemClick() {
         val navView = findViewById<NavigationView>(R.id.nav_view)
         navView.menu.findItem(R.id.nav_myprofile).setOnMenuItemClickListener {
-            navigationViewModel.showCurrentUser.value = true
+            profileViewModel.getUser(auth.currentUser!!.uid)
             false
         }
     }

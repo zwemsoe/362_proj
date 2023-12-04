@@ -15,7 +15,6 @@ import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CommonUtil
 import com.example.travelassistant.utils.CoordinatesUtil
-import com.example.travelassistant.viewModels.NavigationViewModel
 import com.example.travelassistant.viewModels.ProfileViewModel
 import com.example.travelassistant.viewModels.ProfileViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -29,7 +28,6 @@ class ProfileFragment : Fragment() {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var auth: FirebaseAuth
     private lateinit var locationTextView: TextView
-    private var profileId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,15 +51,6 @@ class ProfileFragment : Fragment() {
         val joinedTextView = view.findViewById<TextView>(R.id.profile_join_date)
         val profileImage = view.findViewById<ImageView>(R.id.profile_image)
 
-        profileId = arguments?.getString(PROFILE_ID)
-        if (profileId == null) {
-            profileId = savedInstanceState?.getString(PROFILE_ID)
-        }
-
-        if (profileId == null) {
-            profileViewModel.getUser(auth.currentUser!!.uid)
-        }
-
         profileViewModel.user.observe(viewLifecycleOwner) {
             if (it != null) {
                 profileNameTextView.text = it.displayName
@@ -78,20 +67,7 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
-
-        val navigationViewModel = ViewModelProvider(this)[NavigationViewModel::class.java]
-        navigationViewModel.showCurrentUser.observe(viewLifecycleOwner) {
-            if (it) {
-                profileId = null
-            }
-        }
     }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(PROFILE_ID, profileId)
-    }
-
 
     private fun setCurrentLocation(currentLocation: GeoPoint) {
         lifecycleScope.launch {
