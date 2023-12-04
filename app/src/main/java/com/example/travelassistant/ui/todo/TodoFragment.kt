@@ -1,15 +1,10 @@
 package com.example.travelassistant.ui.todo
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -20,6 +15,8 @@ import com.example.travelassistant.R
 import com.example.travelassistant.models.user.TodoItem
 import com.example.travelassistant.models.user.User
 import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.utils.hideKeyboard
+import com.example.travelassistant.utils.shakeAnimation
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -31,23 +28,19 @@ class TodoFragment : Fragment() {
     private lateinit var inflater: LayoutInflater
     private lateinit var viewModel: TodoViewModel
 
-    private lateinit var todoListView : RecyclerView
-    private lateinit var todoListAdapter : TodoRecyclerAdapter
-    private var todoList : List<TodoItem> = listOf()
-    private lateinit var myUser : String
+    private lateinit var todoListView: RecyclerView
+    private lateinit var todoListAdapter: TodoRecyclerAdapter
+    private lateinit var myUser: String
 
     private lateinit var userRepository: UserRepository
     private lateinit var userViewModel: UserViewModel
     private lateinit var auth: FirebaseAuth
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -56,7 +49,8 @@ class TodoFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
         userRepository = UserRepository()
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository))[UserViewModel::class.java]
+        userViewModel =
+            ViewModelProvider(this, UserViewModelFactory(userRepository))[UserViewModel::class.java]
 
         return view
     }
@@ -72,7 +66,7 @@ class TodoFragment : Fragment() {
                 return@observe
             }
             myUser = user.id
-            setupButtons(user)
+            setupButtons()
             getUserTodoList(user)
         }
         setupSuggestions()
@@ -95,62 +89,49 @@ class TodoFragment : Fragment() {
                 todoView.findViewById<TextView>(R.id.textview_todo).text = suggestion
 
                 //Adds suggestion to user's to do list if checked
-                todoView.findViewById<TextView>(R.id.suggestion_add_button).setOnClickListener() {
+                todoView.findViewById<TextView>(R.id.suggestion_add_button).setOnClickListener {
                     val itemID = UUID.randomUUID().toString()
-                    val item = TodoItem(itemID,"", false)
+                    val item = TodoItem(itemID, "", false)
 
                     item.task = suggestion
-                    userViewModel.addTodoItem(myUser,item)
-                    todoListView.adapter?.notifyItemInserted(todoList.size)
-
-                    Toast.makeText(requireContext(), "Added suggestion!", Toast.LENGTH_SHORT).show()
+                    handleAddTodo(item, "Added suggestion!")
                 }
                 container.addView(todoView)
             }
         }
-        viewModel.generateSuggestions()
     }
 
     //Add todoItem
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
-    private fun setupButtons(user : User) {
+    private fun setupButtons() {
         val addButton: TextView = view.findViewById(R.id.todo_add_button)
         addButton.setOnClickListener {
             val addItem: TextView = view.findViewById(R.id.todo_add_text)
 
-            if (TextUtils.isEmpty(addItem.text.toString())) {
-                addItem.hint = "Please do not leave this field blank"
-                addItem.setHintTextColor(Color.RED)
-            }
-            else {
+            if (addItem.text.toString().isEmpty()) {
+                addItem.shakeAnimation()
+            } else {
                 val itemID = UUID.randomUUID().toString()
                 val item = TodoItem(itemID, addItem.text.toString(), false)
-
-                userViewModel.addTodoItem(user.id, item)
-
-                //Clear text field
                 addItem.text = ""
-                addItem.hint = "Add a new todo item here"
-                addItem.setHintTextColor(Color.GRAY)
-                addItem.clearFocus()
-                todoListView.adapter?.notifyItemInserted(todoList.size)
-
-                //Close keyboard
-                val kb =
-                    requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                kb.hideSoftInputFromWindow(view.windowToken, 0)
-
-                Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+                handleAddTodo(item)
             }
         }
     }
 
+    private fun handleAddTodo(todo: TodoItem, toastMessage: String = "Success") {
+        userViewModel.addTodoItem(auth.currentUser!!.uid, todo)
+        hideKeyboard()
+        Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show()
+    }
+
     //Initiate todoList
-    private fun getUserTodoList(user : User) {
-        todoList = user.todoList
+    private fun getUserTodoList(user: User) {
         todoListAdapter = TodoRecyclerAdapter(userViewModel, user.id)
-        todoListAdapter.setTodoList(todoList)
-        todoListView.adapter = todoListAdapter
-        todoListAdapter.notifyDataSetChanged()
+        viewModel.setTodoList(user.todoList)
+        viewModel.todoList.observe(viewLifecycleOwner) {
+            todoListAdapter.setTodoList(it)
+            todoListView.adapter = todoListAdapter
+        }
     }
 }
