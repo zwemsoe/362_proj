@@ -1,81 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="30dp"
-    android:paddingVertical="60dp"
-    android:theme="@style/DayNightLayout"
-    tools:context=".ui.onboarding.OnboardingUserInfoFragment">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/textView2"
-        style="?colorPrimary"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Let's"
-        android:textSize="72sp"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="30dp" />
-
-    <TextView
-        android:id="@+id/textView3"
-        style="?colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Get to know"
-        android:textSize="42sp"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        tools:layout_editor_absoluteX="30dp" />
-
-    <TextView
-        android:id="@+id/onboarding1_title_end"
-        style="?colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Each other!"
-        android:textSize="42sp"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/onboarding1_title_end">
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="60dp"
+        android:theme="@style/DayNightLayout"
+        tools:context=".ui.onboarding.OnboardingUserInfoFragment">
 
         <TextView
-            style="?colorPrimary"
-            android:layout_width="match_parent"
+            android:id="@+id/textView2"
+            style="?attr/colorPrimary"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:text="You are"
-            android:textSize="28sp" />
+            android:text="Let's"
+            android:textSize="72sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/textView3"
+            style="?attr/colorPrimary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Get to know"
+            android:textSize="42sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-        <EditText
-            android:id="@+id/name_input"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/onboarding1_title_end"
+            style="?attr/colorPrimary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Each other!"
+            android:textSize="42sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/onboarding1_title_end">
+
+            <TextView
+                style="?attr/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:text="You are"
+                android:textSize="28sp" />
+
+            <EditText
+                android:id="@+id/name_input"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/edit_text_area"
+                android:hint="Your name" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/onboarding_user_info_confirm_button"
+            android:layout_width="300dp"
             android:layout_height="50dp"
-            android:background="@drawable/edit_text_area"
-            android:hint="Your name" />
-
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/onboarding_user_info_confirm_button"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:background="@drawable/rounded_button"
-        android:text="Nice to Meet You!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/rounded_button"
+            android:text="Nice to Meet You!"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="180dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
