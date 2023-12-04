@@ -9,49 +9,71 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="60dp"
         android:theme="@style/DayNightLayout"
         tools:context=".SignInActivity">
 
 
         <TextView
             android:id="@+id/signInText"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="144dp"
             android:gravity="center"
-            android:text="Sign in with Google to continue"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toTopOf="@+id/signInBtn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:text="Let's"
+            android:textColor="?colorPrimary"
+            android:textSize="60sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.014" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/signInText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:text="get you in"
+            android:textColor="?colorPrimary"
+            android:textSize="42sp"
+            app:layout_constraintTop_toBottomOf="@id/signInText" />
+
+        <TextView
+            android:id="@+id/signInText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="with Google"
+            android:textColor="?colorPrimary"
+            android:textSize="42sp"
+            app:layout_constraintTop_toBottomOf="@id/signInText2" />
 
         <ImageView
+            android:id="@+id/google_logo"
             android:layout_width="92dp"
             android:layout_height="98dp"
-            android:layout_marginTop="280dp"
+            android:layout_marginTop="60dp"
             android:src="@drawable/google"
-            app:layout_constraintBottom_toTopOf="@+id/signInBtn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.147" />
+            app:layout_constraintTop_toBottomOf="@id/signInText3" />
 
 
         <Button
             android:id="@+id/signInBtn"
-            android:layout_width="341dp"
-            android:layout_height="49dp"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/rounded_button"
             android:gravity="center"
             android:text="Sign in"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.722" />
+            app:layout_constraintTop_toBottomOf="@id/google_logo"
+            app:layout_constraintVertical_bias="1" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

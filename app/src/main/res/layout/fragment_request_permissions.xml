@@ -5,53 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="30dp"
-    android:paddingVertical="60dp"
     android:theme="@style/DayNightLayout"
     tools:context=".ui.onboarding.RequestPermissionsFragment">
 
     <LinearLayout
+        android:id="@+id/text_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            style="?colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="We need the following"
+            android:textColor="?colorPrimary"
             android:textSize="28sp" />
 
         <TextView
-            style="?colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="30dp"
             android:text="Permissions"
+            android:textColor="?colorPrimary"
             android:textSize="40sp" />
 
         <TextView
-            style="?colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="to provide you with"
+            android:textColor="?colorPrimary"
             android:textSize="28sp" />
 
         <TextView
-            style="?colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="the best"
+            android:textColor="?colorPrimary"
             android:textSize="28sp" />
 
         <TextView
-            style="?colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="possible services:"
+            android:textColor="?colorPrimary"
             android:textSize="28sp" />
 
         <LinearLayout
+            android:id="@+id/permission_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="35dp"
@@ -91,13 +92,18 @@
         android:id="@+id/button_request_permissions"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
         android:height="50dp"
         android:background="@drawable/rounded_button"
         android:maxWidth="300dp"
         android:text="Request Permissions"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_container"
+        app:layout_constraintVertical_bias="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
