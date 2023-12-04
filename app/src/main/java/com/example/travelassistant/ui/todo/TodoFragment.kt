@@ -1,10 +1,15 @@
 package com.example.travelassistant.ui.todo
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -12,7 +17,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travelassistant.R
-import com.google.android.material.internal.ViewUtils.hideKeyboard
+import com.example.travelassistant.models.user.TodoItem
+import com.example.travelassistant.models.user.User
+import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.viewModels.UserViewModel
+import com.example.travelassistant.viewModels.UserViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
+import java.util.UUID
+
 
 class TodoFragment : Fragment() {
     private lateinit var view: View
@@ -20,28 +32,50 @@ class TodoFragment : Fragment() {
     private lateinit var viewModel: TodoViewModel
 
     private lateinit var todoListView : RecyclerView
-    //temporary array store
-    private var tempItems : ArrayList<String> = arrayListOf()
-    private var tempItemsFinished : ArrayList<Boolean> = arrayListOf()
+    private lateinit var todoListAdapter : TodoRecyclerAdapter
+    private var todoList : List<TodoItem> = listOf()
+    private lateinit var myUser : String
 
+    private lateinit var userRepository: UserRepository
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var auth: FirebaseAuth
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         this.inflater = inflater
         view = inflater.inflate(R.layout.fragment_todo, container, false)
-        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
 
+        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
+        userRepository = UserRepository()
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository))[UserViewModel::class.java]
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupSuggestions()
-
         todoListView = view.findViewById(R.id.todo_created_container)
-        setupTodoList()
-        setupButtons()
+        //observeDataStoreChanges()
+
+        userViewModel.getUser(auth.currentUser!!.uid)
+        userViewModel.user.observe(viewLifecycleOwner) { user ->
+            if (user == null) {
+                return@observe
+            }
+            myUser = user.id
+            setupButtons(user)
+            getUserTodoList(user)
+        }
+        setupSuggestions()
     }
 
     private fun setupSuggestions() {
@@ -57,41 +91,66 @@ class TodoFragment : Fragment() {
             }
             container.removeAllViews()
             suggestions.forEach { suggestion ->
-                val todoView = inflater.inflate(R.layout.todo_item, container, false)
+                val todoView = inflater.inflate(R.layout.suggestion_item, container, false)
                 todoView.findViewById<TextView>(R.id.textview_todo).text = suggestion
+
+                //Adds suggestion to user's to do list if checked
+                todoView.findViewById<TextView>(R.id.suggestion_add_button).setOnClickListener() {
+                    val itemID = UUID.randomUUID().toString()
+                    val item = TodoItem(itemID,"", false)
+
+                    item.task = suggestion
+                    userViewModel.addTodoItem(myUser,item)
+                    todoListView.adapter?.notifyItemInserted(todoList.size)
+
+                    Toast.makeText(requireContext(), "Added suggestion!", Toast.LENGTH_SHORT).show()
+                }
                 container.addView(todoView)
             }
         }
         viewModel.generateSuggestions()
     }
 
+    //Add todoItem
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
-    private fun setupButtons() {
-        val addButton : TextView = view.findViewById(R.id.todo_add_button)
-        addButton.setOnClickListener{
-            var addItem : TextView = view.findViewById<TextView?>(R.id.todo_add_text)
-            tempItems.add(addItem.text.toString())
-            tempItemsFinished.add(false)
-            addItem.text = ""
-            addItem.clearFocus()
-            todoListView.adapter?.notifyDataSetChanged()
-            hideKeyboard(view)
-            Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+    private fun setupButtons(user : User) {
+        val addButton: TextView = view.findViewById(R.id.todo_add_button)
+        addButton.setOnClickListener {
+            val addItem: TextView = view.findViewById(R.id.todo_add_text)
+
+            if (TextUtils.isEmpty(addItem.text.toString())) {
+                addItem.hint = "Please do not leave this field blank"
+                addItem.setHintTextColor(Color.RED)
+            }
+            else {
+                val itemID = UUID.randomUUID().toString()
+                val item = TodoItem(itemID, addItem.text.toString(), false)
+
+                userViewModel.addTodoItem(user.id, item)
+
+                //Clear text field
+                addItem.text = ""
+                addItem.hint = "Add a new todo item here"
+                addItem.setHintTextColor(Color.GRAY)
+                addItem.clearFocus()
+                todoListView.adapter?.notifyItemInserted(todoList.size)
+
+                //Close keyboard
+                val kb =
+                    requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                kb.hideSoftInputFromWindow(view.windowToken, 0)
+
+                Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+            }
         }
-}
+    }
 
-//Temporary load filler text, change when database implemented
-    private fun setupTodoList() {
-        tempItems.add("one")
-        tempItems.add("two")
-        tempItems.add("three")
-        tempItems.add("four")
-
-        tempItemsFinished.add(false)
-        tempItemsFinished.add(false)
-        tempItemsFinished.add(false)
-        tempItemsFinished.add(false)
-
-        todoListView.adapter = TodoRecyclerAdapter(tempItems,tempItemsFinished)
+    //Initiate todoList
+    private fun getUserTodoList(user : User) {
+        todoList = user.todoList
+        todoListAdapter = TodoRecyclerAdapter(userViewModel, user.id)
+        todoListAdapter.setTodoList(todoList)
+        todoListView.adapter = todoListAdapter
+        todoListAdapter.notifyDataSetChanged()
     }
 }

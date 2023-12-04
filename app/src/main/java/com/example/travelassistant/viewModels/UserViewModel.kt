@@ -86,7 +86,25 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
             userRepository.deleteTodoItem(userId, todoId)
             _user.value?.todoList?.let {
                 _user.value =
-                    _user.value?.copy(todoList = it.filterNot { item -> item.task == todoId })
+                    _user.value?.copy(todoList = it.filterNot { item -> item.id == todoId })
+            }
+        }
+    }
+
+    fun checkTodoItem(userId: String, todoId: String) {
+        viewModelScope.launch {
+            userRepository.checkTodoItem(userId, todoId)
+            _user.value?.todoList?.let {
+                _user.value?.copy(todoList = it)
+            }
+        }
+    }
+
+    fun unCheckTodoItem(userId: String, todoId: String) {
+        viewModelScope.launch {
+            userRepository.unCheckTodoItem(userId, todoId)
+            _user.value?.todoList?.let {
+                _user.value?.copy(todoList = it)
             }
         }
     }
