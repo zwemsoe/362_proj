@@ -184,7 +184,9 @@ class HomeFragment : Fragment() {
             view.findViewById<ConstraintLayout>(R.id.question_limit_container).shakeAnimation()
             return
         }
-        userViewModel.decreasePromptCount(auth.currentUser!!.uid)
+        val uuid = auth.currentUser!!.uid
+        userViewModel.incrementPoints(uuid)
+        userViewModel.decreasePromptCount(uuid)
         switchToQnAMode()
         questionAnswerTextView.text = ""
         homeViewModel.submitQuestion(question)
