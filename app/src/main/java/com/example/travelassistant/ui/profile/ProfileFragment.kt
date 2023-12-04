@@ -29,6 +29,7 @@ class ProfileFragment : Fragment() {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var auth: FirebaseAuth
     private lateinit var locationTextView: TextView
+    private var profileId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,14 +53,17 @@ class ProfileFragment : Fragment() {
         val joinedTextView = view.findViewById<TextView>(R.id.profile_join_date)
         val profileImage = view.findViewById<ImageView>(R.id.profile_image)
 
-        val profileId = arguments?.getString(PROFILE_ID)
+        profileId = arguments?.getString(PROFILE_ID)
+        if (profileId == null) {
+            profileId = savedInstanceState?.getString(PROFILE_ID)
+        }
 
-        if(profileId == null){
+        if (profileId == null) {
             profileViewModel.getUser(auth.currentUser!!.uid)
         }
 
         profileViewModel.user.observe(viewLifecycleOwner) {
-            if(it != null){
+            if (it != null) {
                 profileNameTextView.text = it.displayName
                 reputationTextView.text = it.points.toString()
                 joinedTextView.text = CommonUtil.formatDate(it.createdAt)
@@ -69,15 +73,20 @@ class ProfileFragment : Fragment() {
                         .into(profileImage)
                 }
 
-                if(it.currentLocation != null && !it.keepLocationPrivate){
+                if (it.currentLocation != null && !it.keepLocationPrivate) {
                     setCurrentLocation(it.currentLocation)
                 }
             }
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(PROFILE_ID, profileId)
+    }
 
-    private fun setCurrentLocation(currentLocation: GeoPoint){
+
+    private fun setCurrentLocation(currentLocation: GeoPoint) {
         lifecycleScope.launch {
             val addressList =
                 CoordinatesUtil.getAddressFromLocation(requireContext(), currentLocation)
@@ -89,7 +98,12 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    companion object{
-        val PROFILE_ID = "profile_id"
+    override fun onDestroyView() {
+        super.onDestroyView()
+        arguments?.clear()
+    }
+
+    companion object {
+        const val PROFILE_ID = "profile_id"
     }
 }
