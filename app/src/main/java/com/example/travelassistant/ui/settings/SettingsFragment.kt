@@ -20,6 +20,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.travelassistant.BuildConfig
 import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
+import com.example.travelassistant.openai.TravelAssistant
+import com.example.travelassistant.ui.home.HomeViewModel
+import com.example.travelassistant.ui.todo.TodoViewModel
 import com.example.travelassistant.utils.CommonUtil.extractDisplayName
 import com.example.travelassistant.utils.CoordinatesUtil
 import com.example.travelassistant.viewModels.OnboardingViewModel
@@ -112,6 +115,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
                     location,
                     keepLocationPrivate
                 )
+                refreshSuggestions(location)
                 Toast.makeText(requireContext(), "Saved changes.", Toast.LENGTH_SHORT).show()
             }
 
@@ -160,6 +164,14 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         if (userViewModel.user.value == null) {
             onboardingViewModel.fetchLastLocation(requireActivity(), locationProviderClient)
         }
+    }
+
+    private fun refreshSuggestions(geoPoint: GeoPoint) {
+        TravelAssistant.setUserLocation(geoPoint)
+        val homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+        homeViewModel.generateSuggestions()
+        val todoViewModel = ViewModelProvider(requireActivity())[TodoViewModel::class.java]
+        todoViewModel.generateSuggestions()
     }
 
     private fun setCurrentLocation(currentLocation: GeoPoint) {

@@ -26,7 +26,7 @@ import java.util.UUID
 class TodoFragment : Fragment() {
     private lateinit var view: View
     private lateinit var inflater: LayoutInflater
-    private lateinit var viewModel: TodoViewModel
+    private lateinit var todoViewModel: TodoViewModel
 
     private lateinit var todoListView: RecyclerView
     private lateinit var todoListAdapter: TodoRecyclerAdapter
@@ -47,7 +47,7 @@ class TodoFragment : Fragment() {
         this.inflater = inflater
         view = inflater.inflate(R.layout.fragment_todo, container, false)
 
-        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
+        todoViewModel = ViewModelProvider(requireActivity())[TodoViewModel::class.java]
         userRepository = UserRepository()
         userViewModel =
             ViewModelProvider(this, UserViewModelFactory(userRepository))[UserViewModel::class.java]
@@ -78,7 +78,7 @@ class TodoFragment : Fragment() {
         loadingOrFail.text = "Loading..."
         container.addView(loadingOrFail)
 
-        viewModel.suggestedTodoList.observe(viewLifecycleOwner) { suggestions ->
+        todoViewModel.suggestedTodoList.observe(viewLifecycleOwner) { suggestions ->
             if (suggestions.isEmpty()) {
                 loadingOrFail.text = "Sorry, cannot give any suggestions at the moment"
                 return@observe
@@ -128,8 +128,8 @@ class TodoFragment : Fragment() {
     //Initiate todoList
     private fun getUserTodoList(user: User) {
         todoListAdapter = TodoRecyclerAdapter(userViewModel, user.id)
-        viewModel.setTodoList(user.todoList)
-        viewModel.todoList.observe(viewLifecycleOwner) {
+        todoViewModel.setTodoList(user.todoList)
+        todoViewModel.todoList.observe(viewLifecycleOwner) {
             todoListAdapter.setTodoList(it)
             todoListView.adapter = todoListAdapter
         }

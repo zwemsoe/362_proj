@@ -19,7 +19,7 @@ class TodoViewModel : ViewModel() {
         generateSuggestions()
     }
 
-    private fun generateSuggestions() {
+    fun generateSuggestions() {
         var responseText = ""
         viewModelScope.launch {
             TravelAssistant.askTodoSuggestions().collect {

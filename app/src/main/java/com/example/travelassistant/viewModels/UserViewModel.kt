@@ -62,6 +62,9 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
                     currentLocation = location,
                     keepLocationPrivate = keepLocationPrivate
                 )
+            if (_user.value != null) {
+                TravelAssistant.setUser(_user.value!!)
+            }
         }
     }
 
