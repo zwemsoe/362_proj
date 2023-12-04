@@ -154,7 +154,7 @@ class SettingsFragment : Fragment(), OnMapReadyCallback {
         }
 
         onboardingViewModel.displayName.observe(viewLifecycleOwner) {
-            nameTextView.text = "Hi, $it!"
+            nameTextView.text = "Hi, ${extractDisplayName(it)}!"
         }
 
         if (userViewModel.user.value == null) {

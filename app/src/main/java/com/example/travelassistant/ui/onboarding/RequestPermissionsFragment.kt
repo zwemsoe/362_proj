@@ -22,7 +22,7 @@ import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 
-private const val NAVIGATION_DELAY = 3000L
+private const val NAVIGATION_DELAY = 2000L
 
 class RequestPermissionsFragment : Fragment() {
     private lateinit var view: View
@@ -90,8 +90,6 @@ class RequestPermissionsFragment : Fragment() {
         // clear the listener
         requestPermissionsButton.setOnClickListener(null)
         requestPermissionsButton.text = "Thanks For Permissions!"
-        val successGreen = Color.parseColor("#4BB543")
-        requestPermissionsButton.setBackgroundColor(successGreen)
 
         //TODO: Add green checkboxes next to each permission text
 
@@ -130,6 +128,7 @@ class RequestPermissionsFragment : Fragment() {
             requestPermissions()
         }
     }
+
     override fun onResume() {
         super.onResume()
         (activity as AppCompatActivity?)!!.supportActionBar?.hide()
