@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +19,6 @@ import com.bumptech.glide.Glide
 import com.example.travelassistant.databinding.ActivityMainBinding
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.viewModels.NavigationViewModel
-import com.example.travelassistant.viewModels.OnboardingViewModel
 import com.example.travelassistant.viewModels.UserViewModel
 import com.example.travelassistant.viewModels.UserViewModelFactory
 import com.google.android.material.navigation.NavigationView
