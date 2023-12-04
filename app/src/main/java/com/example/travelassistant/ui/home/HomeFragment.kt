@@ -129,7 +129,7 @@ class HomeFragment : Fragment() {
         showAnswerOnMapButton.isEnabled = false // TODO
         searchImageButton = view.findViewById(R.id.search_image)
 
-        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         userRepository = UserRepository()
         userViewModel = ViewModelProvider(
             requireActivity() /* Do not change to "this" */,

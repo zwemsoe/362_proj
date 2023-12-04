@@ -20,7 +20,7 @@ class HomeViewModel : ViewModel() {
         generateSuggestions()
     }
 
-    private fun generateSuggestions() {
+    fun generateSuggestions() {
         var responseText = ""
         viewModelScope.launch {
             TravelAssistant.askQuestionSuggestions().collect {

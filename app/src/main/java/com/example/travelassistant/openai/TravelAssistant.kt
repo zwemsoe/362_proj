@@ -12,6 +12,7 @@ import com.aallam.openai.client.OpenAIConfig
 import com.aallam.openai.client.RetryStrategy
 import com.example.travelassistant.BuildConfig
 import com.example.travelassistant.models.user.User
+import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
@@ -92,5 +93,9 @@ object TravelAssistant {
 
     fun setUser(user: User) {
         this.user = user
+    }
+
+    fun setUserLocation(geoPoint: GeoPoint) {
+        user = user?.copy(currentLocation = geoPoint)
     }
 }
