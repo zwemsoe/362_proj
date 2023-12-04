@@ -16,6 +16,7 @@ import com.example.travelassistant.R
 import com.example.travelassistant.models.user.UserRepository
 import com.example.travelassistant.utils.CommonUtil
 import com.example.travelassistant.utils.CoordinatesUtil
+import com.example.travelassistant.viewModels.NavigationViewModel
 import com.example.travelassistant.viewModels.ProfileViewModel
 import com.example.travelassistant.viewModels.ProfileViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -76,6 +77,13 @@ class ProfileFragment : Fragment() {
                 if (it.currentLocation != null && !it.keepLocationPrivate) {
                     setCurrentLocation(it.currentLocation)
                 }
+            }
+        }
+
+        val navigationViewModel = ViewModelProvider(this)[NavigationViewModel::class.java]
+        navigationViewModel.showCurrentUser.observe(viewLifecycleOwner) {
+            if (it) {
+                profileId = null
             }
         }
     }
