@@ -29,6 +29,7 @@ class ProfileFragment : Fragment() {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var auth: FirebaseAuth
     private lateinit var locationTextView: TextView
+    private var profileId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +53,10 @@ class ProfileFragment : Fragment() {
         val joinedTextView = view.findViewById<TextView>(R.id.profile_join_date)
         val profileImage = view.findViewById<ImageView>(R.id.profile_image)
 
-        val profileId = arguments?.getString(PROFILE_ID)
+        profileId = arguments?.getString(PROFILE_ID)
+        if (profileId == null) {
+            profileId = savedInstanceState?.getString(PROFILE_ID)
+        }
 
         if (profileId == null) {
             profileViewModel.getUser(auth.currentUser!!.uid)
@@ -74,6 +78,11 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(PROFILE_ID, profileId)
     }
 
 

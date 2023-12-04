@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class ProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
-    val _user = MutableLiveData<User>()
+    private val _user = MutableLiveData<User>()
     val user: LiveData<User> = _user
 
 
