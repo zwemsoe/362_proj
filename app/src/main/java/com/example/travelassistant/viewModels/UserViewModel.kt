@@ -56,15 +56,21 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     fun updateSettings(id: String, location: GeoPoint, keepLocationPrivate: Boolean) {
         viewModelScope.launch {
-            userRepository.updateSettings(id, location, keepLocationPrivate )
-            _user.value = _user.value?.copy(currentLocation = location, keepLocationPrivate = keepLocationPrivate)
+            userRepository.updateSettings(id, location, keepLocationPrivate)
+            _user.value =
+                _user.value?.copy(
+                    currentLocation = location,
+                    keepLocationPrivate = keepLocationPrivate
+                )
         }
     }
 
-    fun updatePoints(id: String, points: Int) {
+    fun incrementPoints(id: String) {
         viewModelScope.launch {
-            userRepository.updatePoints(id, points)
-            _user.value = _user.value?.copy(points = points)
+            val curr = _user.value?.points ?: 0
+            val update = curr + 1
+            userRepository.updatePoints(id, update)
+            _user.value = _user.value?.copy(points = update)
         }
     }
 
